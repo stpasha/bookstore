@@ -24,9 +24,11 @@ public class Order {
     private Long id;
 
     @Column(name = "comment", nullable = false)
+    @EqualsAndHashCode.Include
     private String comment;
 
     @Column(name = "created_at", updatable = false)
+    @EqualsAndHashCode.Include
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "updated_at")

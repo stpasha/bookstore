@@ -28,6 +28,7 @@ public class Item {
     private Order order;
 
     @Column(name = "title", nullable = false)
+    @EqualsAndHashCode.Include
     private String title;
 
     @Column(name = "item_description")
@@ -37,6 +38,7 @@ public class Item {
     private String imageUrl;
 
     @Column(name = "price", precision = 10, scale = 2)
+    @EqualsAndHashCode.Include
     private BigDecimal price;
 
     @Column(name = "quantity_available")
