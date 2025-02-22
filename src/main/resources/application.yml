@@ -1,0 +1,15 @@
+spring:
+  application:
+      name: store
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+    enabled: true
+    default-schema: storedata
+    rollback-file: classpath:/db/changelog/roll-back-file
