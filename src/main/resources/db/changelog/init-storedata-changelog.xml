@@ -5,26 +5,9 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <!-- Создание роли baseadm -->
-    <changeSet id="1" author="nomatter">
-        <preConditions onFail="HALT">
-            <not>
-                <sqlCheck expectedResult="0">
-                    SELECT COUNT(*) FROM pg_catalog.pg_roles WHERE rolname = 'baseadm';
-                </sqlCheck>
-            </not>
-        </preConditions>
-        <sql>
-            CREATE ROLE baseadm WITH LOGIN PASSWORD 'basepass';
-        </sql>
-        <rollback>
-            <sql>DROP ROLE IF EXISTS baseadm;</sql>
-        </rollback>
-    </changeSet>
-
     <!-- Создание базы данных store -->
-    <changeSet id="2" author="nomatter" runOnChange="true">
-        <preConditions onFail="HALT">
+    <changeSet id="1" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
             <not>
                 <sqlCheck expectedResult="0">
                     SELECT COUNT(*) FROM pg_database WHERE datname = 'store';
@@ -40,7 +23,7 @@
     </changeSet>
 
     <!-- Создание схемы storedata -->
-    <changeSet id="3" author="nomatter">
+    <changeSet id="2" author="nomatter">
         <sql>
             CREATE SCHEMA IF NOT EXISTS storedata AUTHORIZATION baseadm;
             ALTER SCHEMA storedata OWNER TO baseadm;
@@ -56,7 +39,7 @@
 <!--    </changeSet>-->
 
     <!-- Создание таблицы orders -->
-    <changeSet id="5" author="nomatter">
+    <changeSet id="3" author="nomatter">
         <createTable tableName="orders" schemaName="storedata">
             <column name="order_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -73,7 +56,7 @@
     </changeSet>
 
     <!-- Создание таблицы items -->
-    <changeSet id="6" author="nomatter">
+    <changeSet id="4" author="nomatter">
         <createTable tableName="items" schemaName="storedata">
             <column name="item_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -94,7 +77,7 @@
     </changeSet>
 
     <!-- Создание таблицы products -->
-    <changeSet id="7" author="nomatter">
+    <changeSet id="5" author="nomatter">
         <createTable tableName="products" schemaName="storedata">
             <column name="product_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
