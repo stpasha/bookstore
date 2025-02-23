@@ -1,16 +1,13 @@
 package com.bookstory.store.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "items", schema = "storedata")
 @Getter
 @Setter
-@ToString(exclude = "order")
+@ToString(exclude = {"order", "product"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,22 +24,9 @@ public class Item {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @Column(name = "title", nullable = false)
-    @EqualsAndHashCode.Include
-    private String title;
+    @Column(name = "quantity")
+    private Long quantity;
 
-    @Column(name = "item_description")
-    private String description;
-
-    @Column(name = "image_url")
-    private String imageUrl;
-
-    @Column(name = "price", precision = 10, scale = 2)
-    @EqualsAndHashCode.Include
-    private BigDecimal price;
-
-    @Column(name = "quantity_available")
-    private Long quantityAvailable;
-
+    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Product product;
 }
-

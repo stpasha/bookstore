@@ -8,8 +8,21 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  datasource:
+    initialization-mode: never
+    # Указываем имя контейнера в URL!
+    url: jdbc:postgresql://intershop:5432/bookstore
+    username: baseadm
+    password: basepass
+    driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
     enabled: true
     default-schema: storedata
     rollback-file: classpath:/db/changelog/roll-back-file
+image:
+  upload:
+    dir: ./uploads/images
+    resource: "file:uploads/"
+  static:
+    resource: classpath:/static/

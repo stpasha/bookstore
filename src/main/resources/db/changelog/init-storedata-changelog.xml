@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Создание роли baseadm -->
+    <changeSet id="1" author="nomatter">
+        <preConditions onFail="HALT">
+            <not>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM pg_catalog.pg_roles WHERE rolname = 'baseadm';
+                </sqlCheck>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE ROLE baseadm WITH LOGIN PASSWORD 'basepass';
+        </sql>
+        <rollback>
+            <sql>DROP ROLE IF EXISTS baseadm;</sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Создание базы данных store -->
+    <changeSet id="2" author="nomatter" runOnChange="true">
+        <preConditions onFail="HALT">
+            <not>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM pg_database WHERE datname = 'store';
+                </sqlCheck>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE DATABASE store WITH OWNER baseadm;
+        </sql>
+        <rollback>
+            <sql>DROP DATABASE IF EXISTS store;</sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Создание схемы storedata -->
+    <changeSet id="3" author="nomatter">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS storedata AUTHORIZATION baseadm;
+            ALTER SCHEMA storedata OWNER TO baseadm;
+        </sql>
+        <rollback>
+            <sql>DROP SCHEMA IF EXISTS storedata CASCADE;</sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Устанавливаем search_path (только в сессии, не влияет на схему) -->
+<!--    <changeSet id="4" author="nomatter" runOnChange="true">-->
+<!--        <sql>SET search_path TO storedata;</sql>-->
+<!--    </changeSet>-->
+
+    <!-- Создание таблицы orders -->
+    <changeSet id="5" author="nomatter">
+        <createTable tableName="orders" schemaName="storedata">
+            <column name="order_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="comment" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="orders" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Создание таблицы items -->
+    <changeSet id="6" author="nomatter">
+        <createTable tableName="items" schemaName="storedata">
+            <column name="item_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="BIGINT"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="items" baseColumnNames="order_id"
+                                 referencedTableName="orders" referencedColumnNames="order_id"
+                                 constraintName="fk_items_orders"
+                                 onDelete="CASCADE"
+                                 schemaName="storedata"/>
+        <rollback>
+            <dropTable tableName="items" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Создание таблицы products -->
+    <changeSet id="7" author="nomatter">
+        <createTable tableName="products" schemaName="storedata">
+            <column name="product_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="item_id" type="BIGINT">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="item_description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image_url" type="VARCHAR(255)"/>
+            <column name="price" type="DECIMAL(10,2)"/>
+            <column name="quantity_available" type="BIGINT"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="products" baseColumnNames="item_id"
+                                 referencedTableName="items" referencedColumnNames="item_id"
+                                 constraintName="fk_products_items"
+                                 schemaName="storedata"/>
+        <rollback>
+            <dropTable tableName="products" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

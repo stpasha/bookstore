@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["./basebook-0.2.jar"]
+    networks:
+      - backend
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: basebook
+      POSTGRES_USER: baseadm
+      POSTGRES_PASSWORD: basepass
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    volumes:
+      # Сохранение данных между перезапусками
+      - postgres_data:/var/lib/postgresql/data
+      # Автоинициализация базы при первом запуске
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+    networks:
+      - backend
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 8082:8080
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
+volumes:
+  postgres_data:
