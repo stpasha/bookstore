@@ -30,4 +30,6 @@ public class ProductDTO {
     private BigDecimal price;
     @Min(0)
     private Long quantityAvailable;
+    @Min(0)
+    private Long quantity;
 }

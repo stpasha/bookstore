@@ -10,6 +10,7 @@ spring:
         # Выводить SQL в консоль
         show_sql: true
         ddl-auto: none
+        default_schema: storedata
   datasource:
     init: never
     # Указываем имя контейнера в URL!

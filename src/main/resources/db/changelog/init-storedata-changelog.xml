@@ -23,7 +23,14 @@
     </changeSet>
 
     <!-- Создание схемы storedata -->
-    <changeSet id="2" author="nomatter">
+    <changeSet id="2" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM pg_catalog.pg_namespace WHERE nspname = 'storedata';
+                </sqlCheck>
+            </not>
+        </preConditions>
         <sql>
             CREATE SCHEMA IF NOT EXISTS storedata AUTHORIZATION baseadm;
             ALTER SCHEMA storedata OWNER TO baseadm;
@@ -33,13 +40,15 @@
         </rollback>
     </changeSet>
 
-    <!-- Устанавливаем search_path (только в сессии, не влияет на схему) -->
-<!--    <changeSet id="4" author="nomatter" runOnChange="true">-->
-<!--        <sql>SET search_path TO storedata;</sql>-->
-<!--    </changeSet>-->
-
     <!-- Создание таблицы orders -->
-    <changeSet id="3" author="nomatter">
+    <changeSet id="3" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'storedata' AND table_name = 'orders';
+                </sqlCheck>
+            </not>
+        </preConditions>
         <createTable tableName="orders" schemaName="storedata">
             <column name="order_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -56,7 +65,14 @@
     </changeSet>
 
     <!-- Создание таблицы items -->
-    <changeSet id="4" author="nomatter">
+    <changeSet id="4" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'storedata' AND table_name = 'items';
+                </sqlCheck>
+            </not>
+        </preConditions>
         <createTable tableName="items" schemaName="storedata">
             <column name="item_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -65,25 +81,49 @@
                 <constraints nullable="false"/>
             </column>
             <column name="quantity" type="BIGINT"/>
+            <column name="product_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
+        <rollback>
+            <dropTable tableName="items" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Добавление внешнего ключа для таблицы items -->
+    <changeSet id="5" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.key_column_usage WHERE table_name = 'items' AND constraint_name = 'fk_items_orders';
+                </sqlCheck>
+            </not>
+        </preConditions>
         <addForeignKeyConstraint baseTableName="items" baseColumnNames="order_id"
                                  referencedTableName="orders" referencedColumnNames="order_id"
                                  constraintName="fk_items_orders"
                                  onDelete="CASCADE"
                                  schemaName="storedata"/>
         <rollback>
-            <dropTable tableName="items" schemaName="storedata"/>
+            <dropForeignKeyConstraint baseTableName="items" constraintName="fk_items_orders"/>
         </rollback>
     </changeSet>
 
     <!-- Создание таблицы products -->
-    <changeSet id="5" author="nomatter">
+    <changeSet id="6" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'storedata' AND table_name = 'products';
+                </sqlCheck>
+            </not>
+        </preConditions>
         <createTable tableName="products" schemaName="storedata">
             <column name="product_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="item_id" type="BIGINT">
-                <constraints unique="true" nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="title" type="VARCHAR(255)">
                 <constraints nullable="false"/>

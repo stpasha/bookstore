@@ -6,82 +6,87 @@
 </head>
 
 <body>
-    <a href="/orders" style="float:right;">
-        <b>ЗАКАЗЫ &cudarrr;</b>
-    </a>
-    <a href="/items" style="float:right;">
-        <b>КОРЗИНА &cudarrr;</b>
-    </a>
-    <table style="width:70%;margin-left:auto;margin-right:auto;">
-        <tr>
-            <td>
-                <form>
-                    <p>
-                        <label for="search">Найти: </label>
-                        <input id="search" style="width:300px;" name="search" th:value="${search}">
-                        <button name="action">&#128269;</button>
-                    </p>
-                    <p>
-                        <label for="sort">Сортировка: </label>
-                        <select id="sort" name="sort" onchange="this.form.submit()">
-                            <option value="NO" th:selected="${sort=='NO'}">нет</option>
-                            <option value="ALPHA" th:selected="${sort=='ALPHA'}">по алфавиту</option>
-                            <option value="PRICE" th:selected="${sort=='PRICE'}">по цене</option>
-                        </select>
-                    </p>
-                    <p>
-                        <label for="pageSize">Число товаров: </label>
-                        <select id="pageSize" name="pageSize" onchange="this.form.submit()">
-                            <option value="5" th:selected="${paging.pageSize()==5}">5</option>
-                            <option value="10" th:selected="${paging.pageSize()==10}">10</option>
-                            <option value="20" th:selected="${paging.pageSize()==20}">20</option>
-                            <option value="50" th:selected="${paging.pageSize()==50}">50</option>
-                            <option value="100" th:selected="${paging.pageSize()==100}">100</option>
-                        </select>
-                    </p>
-                    <p>
-                        <button th:if="${paging.hasPrevious()}" name="pageNumber" th:value="${paging.pageNumber()-1}">&lt;</button>
-                        <span th:text="${'Страница: '+paging.pageNumber()}"></span>
-                        <button th:if="${paging.hasNext()}" name="pageNumber" th:value="${paging.pageNumber()+1}">&gt;</button>
-                    </p>
-                </form>
-            </td>
-        </tr>
-        <tr th:each="productsRow : ${products}">
-            <td th:each="product : ${productsRow}">
-                <table>
-                    <tr>
-                        <td>
-                            <a th:href="${'/products/'+product.getId()}">
-                                <img width="300" height="300" th:src="${'http://localhost:8080/'+product.getImgPath()}">
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b th:text="${product.getTitle()}"></b>
-                        </td>
-                        <td>
-                            <b th:text="${product.getPrice()}+' руб.'"></b>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td th:text="${product.getDescription()}"></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <form th:action="${'/items/'+product.getId()}" method="post">
-                                <button name="action" value="minus">-</button>
-                                <span th:text="${product.getQuantityAvailable()}"></span>
-                                <button name="action" value="plus">+</button>
-                                <button name="action" value="plus" th:if="${product.getQuantity()==0}" style="float:right;">В корзину</button>
-                            </form>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+<a href="/orders" style="float:right;">
+    <b>ЗАКАЗЫ &cudarrr;</b>
+</a>
+<a href="/items" style="float:right;">
+    <b>КОРЗИНА &cudarrr;</b>
+</a>
+<table style="width:70%;margin-left:auto;margin-right:auto;">
+    <tr>
+        <td>
+            <form method="get">
+                <p>
+                    <label for="search">Найти: </label>
+                    <input id="search" style="width:300px;" name="search" th:value="${search}">
+                    <button name="action">&#128269;</button>
+                </p>
+                <p>
+                    <label for="sort">Сортировка: </label>
+                    <select id="sort" name="sort" onchange="this.form.submit()">
+                        <option value="id" th:selected="${sort=='id'}">нет</option>
+                        <option value="title" th:selected="${sort=='title'}">по алфавиту</option>
+                        <option value="price" th:selected="${sort=='price'}">по цене</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="pageSize">Число товаров: </label>
+                    <select id="pageSize" name="pageSize" onchange="this.form.submit()">
+                        <option value="5" th:selected="${paging.pageable.pageSize == 5}">5</option>
+                        <option value="10" th:selected="${paging.pageable.pageSize == 10}">10</option>
+                        <option value="20" th:selected="${paging.pageable.pageSize == 20}">20</option>
+                        <option value="50" th:selected="${paging.pageable.pageSize == 50}">50</option>
+                        <option value="100" th:selected="${paging.pageable.pageSize == 100}">100</option>
+                    </select>
+                </p>
+                <p>
+
+                    <button th:if="${paging.hasPrevious()}" name="pageNumber" th:value="${paging.number - 1}">&lt;</button>
+
+
+                    <span th:text="${'Страница: ' + (paging.number + 1)}"></span>
+
+
+                    <button th:if="${paging.hasNext()}" name="pageNumber" th:value="${paging.number + 1}">&gt;</button>
+                </p>
+            </form>
+        </td>
+    </tr>
+    <tr th:each="productsRow : ${products}">
+        <td th:each="product : ${productsRow}">
+            <table>
+                <tr>
+                    <td>
+                        <a th:href="@{'/products/' + ${product.id}}">
+                            <img width="300" height="300"  th:src="${product.imageUrl}"/>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b th:text="${product.title}"></b>
+                    </td>
+                    <td>
+                        <b th:text="${product.price} + ' руб.'"></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td th:text="${product.description}"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <form th:action="@{'/items/' + ${product.id}}" method="post">
+                            <button name="action" value="minus">-</button>
+                            <span th:text="${product.quantityAvailable}"></span>
+                            <button name="action" value="plus">+</button>
+                            <button name="action" value="plus" th:if="${product.quantity == 0}" style="float:right;">В корзину</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 </body>
 
 </html>

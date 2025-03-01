@@ -31,7 +31,7 @@ public class DefaultProductService implements ProductService {
             products = repository.findAll(pageable);
         } else {
             log.info("get all products filter {} page {}", title, pageable);
-            products = repository.findByNameContainingIgnoreCase(title, pageable);
+            products = repository.findByTitleContainingIgnoreCase(title, pageable);
         }
         return products.map(productMapper::toDto);
     }

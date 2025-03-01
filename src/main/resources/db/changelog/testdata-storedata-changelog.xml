@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+<changeSet id="insert-products-data" author="your_name">
+    <preConditions onFail="MARK_RAN">
+        <sqlCheck expectedResult="0">SELECT COUNT(*) FROM storedata.products</sqlCheck>
+    </preConditions>
+
+    <sql>
+        INSERT INTO storedata.products (title, item_description, image_url, price, quantity_available)
+        VALUES
+        ('Java: The Complete Reference', 'Полное руководство по Java', '/uploads/images/1.jpeg', 1145.99, 100),
+        ('Effective Java', 'Лучшие практики программирования на Java', '/uploads/images/2.jpeg', 3229.99, 80),
+        ('Spring in Action', 'Глубокое погружение в Spring Framework', '/uploads/images/3.png', 49.99, 60),
+        ('Clean Code', 'Руководство по написанию чистого кода', '/uploads/images/4.jpg', 421.50, 120),
+        ('Moby-Dick', 'Классика американской литературы о капитане Ахаве', '/uploads/images/5.png', 2222.00, 160),
+        ('Crime and Punishment', 'Достоевский о морали и наказании', '/uploads/images/6.jpeg', 1117.99, 140),
+        ('The Catcher in the Rye', 'Роман Сэлинджера о взрослении', '/uploads/images/7.jpg', 1226.50, 150),
+        ('The Great Gatsby', 'История Джея Гэтсби от Фицджеральда', '/uploads/images/8.jpg', 120.99, 130),
+        ('War and Peace', 'Эпопея Льва Толстого о России в 1812 году', '/uploads/images/9.png', 825.99, 110),
+        ('The Hobbit', 'Фантастическая история о приключениях хоббита', '/uploads/images/10.jpg', 1118.99, 190),
+        ('The Complete Book of Classic Cars', 'История и обзор классических автомобилей', '/uploads/images/11.jpg', 8855.99, 100),
+        ('How Cars Work', 'Простое и понятное объяснение принципов работы автомобилей', '/uploads/images/12.jpg', 125.99, 80),
+        ('The Art of the Automobile', 'Автомобиль как искусство', '/uploads/images/13.jpeg', 9965.00, 50),
+        ('Car Science', 'Физика и механика автомобилей', '/uploads/images/14.jpeg', 1140.75, 70),
+        ('Porsche 911: The Ultimate Guide', 'История и эволюция Porsche 911', '/uploads/images/16.jpg', 2248.99, 90),
+        ('Machine Learning Yearning', 'Практическое руководство по ML', '/uploads/images/1.jpeg', 1139.99, 65),
+        ('Deep Learning with Python', 'Изучение глубинного обучения', '/uploads/images/1.jpeg', 349.50, 55),
+        ('Artificial Intelligence: A Guide', 'Введение в ИИ', '/uploads/images/1.jpeg', 3353.75, 45),
+        ('The DevOps Handbook', 'Принципы DevOps', '/uploads/images/1.jpeg', 148.99, 70),
+        ('Driving Dreams: The Best Concept Cars', 'Лучшие концепт-кары мира', '/uploads/images/11.jpg', 60.99, 40),
+        ('1984', 'Роман-антиутопия Джорджа Оруэлла', '/uploads/images/7.jpg', 115.99, 200),
+        ('Brave New World', 'Мир будущего, описанный Олдосом Хаксли', '/uploads/images/7.jpg', 2218.50, 180),
+        ('Fahrenheit 451', 'История о запрете книг и тоталитаризме', '/uploads/images/7.jpg', 1114.99, 190),
+        ('To Kill a Mockingbird', 'Роман Харпер Ли о расизме и справедливости', NULL, 19.99, 170);
+    </sql>
+</changeSet>
+
+</databaseChangeLog>

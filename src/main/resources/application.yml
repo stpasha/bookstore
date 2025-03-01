@@ -13,7 +13,7 @@ spring:
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
     enabled: true
-    default-schema: public
+    default-schema: storedata
 image:
   upload:
     dir: ./uploads/images

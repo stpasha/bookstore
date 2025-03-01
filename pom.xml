@@ -16,20 +16,8 @@
 	<properties>
 		<version>0.1</version>
 		<java.version>21</java.version>
+		<map.struct.version>1.5.5.Final</map.struct.version>
 	</properties>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
 	<dependencies>
 		<!--Boot dependencies -->
 		<dependency>
@@ -84,12 +72,12 @@
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
-			<version>1.5.5.Final</version>
+			<version>${map.struct.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct-processor</artifactId>
-			<version>1.5.5.Final</version>
+			<version>${map.struct.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -104,6 +92,11 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+						</path>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${map.struct.version}</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
