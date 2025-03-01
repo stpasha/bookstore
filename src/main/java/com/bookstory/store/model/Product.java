@@ -1,8 +1,10 @@
 package com.bookstory.store.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
 
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 
 @Entity
@@ -36,8 +38,10 @@ public class Product {
     private String imageUrl;
 
     @Column(name = "price", precision = 10, scale = 2)
+    @DecimalMin(value = "0.00", message = "Price must be greater than or equal to 0.00")
     private BigDecimal price;
 
     @Column(name = "quantity_available")
+    @Min(value = 0, message = "Quantity available must be greater than or equal to 0")
     private Long quantityAvailable;
 }

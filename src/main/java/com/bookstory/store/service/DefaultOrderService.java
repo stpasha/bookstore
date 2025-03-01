@@ -3,7 +3,7 @@ package com.bookstory.store.service;
 import com.bookstory.store.persistence.OrderRepository;
 import com.bookstory.store.web.dto.OrderDTO;
 import com.bookstory.store.web.mapper.OrderMapper;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,17 +20,10 @@ public class DefaultOrderService implements OrderService {
     final private OrderMapper orderMapper;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Optional<OrderDTO> createOrder(OrderDTO order) {
         log.info("create order {}", order);
-        OrderDTO orderDTO;
-        try {
-            orderDTO = orderMapper.toDto(orderRepository.save(orderMapper.toEntity(order)));
-        } catch (Exception e) {
-            log.error("Unexpected error while creating item", e);
-            throw new RuntimeException(e);
-        }
-        return Optional.ofNullable(orderDTO);
+        return Optional.of(orderMapper.toDto(orderRepository.save(orderMapper.toEntity(order))));
     }
 
     @Override

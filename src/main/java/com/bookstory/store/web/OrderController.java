@@ -2,36 +2,55 @@ package com.bookstory.store.web;
 
 import com.bookstory.store.service.OrderService;
 import com.bookstory.store.web.dto.OrderDTO;
-import com.bookstory.store.web.mapper.OrderMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/orders")
+@Slf4j
 public class OrderController {
 
-    private OrderService orderService;
-    private OrderMapper orderMapper;
+    final private OrderService orderService;
 
-    public OrderController(OrderService orderService, OrderMapper orderMapper) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
-        this.orderMapper = orderMapper;
     }
 
     @GetMapping
     public String listOrders(Model model) {
-        model.addAttribute("orders", orderMapper.toDtoList(orderService.getAllOrders()));
+        log.info("list orders");
+        model.addAttribute("orders", orderService.getAllOrders());
         return "orders";
     }
 
-    @PostMapping
-    public String createOrder(@ModelAttribute OrderDTO order) {
+    @GetMapping("/{id}")
+    public String getOrder(Model model, @PathVariable("id") Long id) {
+        return orderService.getOrder(id).map(orderDTO -> {
+            model.addAttribute("order", orderDTO);
+            log.info("found order: {}", orderDTO);
+            return "order";
+        }).orElseGet(() -> {
+            model.addAttribute("error", "Order is not found");
+            log.error("no order found by id {}", id);
+            return "error";
+        });
+    }
 
+    @PostMapping
+    public String createOrder(@Valid @ModelAttribute OrderDTO order, Model model) {
+        return orderService.createOrder(order).map(orderDTO -> {
+            log.info("created order: {}", orderDTO);
+            model.addAttribute("order", orderDTO);
+            return "order";
+        }).orElseGet(() -> {
+            model.addAttribute("error", "Order is not created");
+            log.error("Order is not created {}", order);
+            return "error";
+        });
     }
 }

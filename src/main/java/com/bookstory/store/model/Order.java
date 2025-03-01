@@ -3,6 +3,8 @@ package com.bookstory.store.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,6 +27,8 @@ public class Order {
 
     @Column(name = "comment", nullable = false)
     @EqualsAndHashCode.Include
+    @Size(max = 255, message = "Comment must be less than 255 characters")
+    @NotNull(message = "Comment cannot be null")
     private String comment;
 
     @Column(name = "created_at", updatable = false)

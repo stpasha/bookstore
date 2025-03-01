@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,38 +25,26 @@ public class DefaultItemService implements ItemService {
     final public ItemMapper itemMapper;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Optional<ItemDTO> createItem(ItemDTO itemDTO) {
-        try {
-            log.info("create item {}", itemDTO);
-            Item item = itemMapper.toEntity(itemDTO);
-            Item savedItem = itemRepository.save(item);
-            log.info("item created id {}", savedItem.getId());
-            return Optional.of(itemMapper.toDto(savedItem));
-        } catch (Exception e) {
-            log.error("Unexpected error while creating item", e);
-            throw new RuntimeException(e);
-        }
-
+        log.info("create item {}", itemDTO);
+        Item item = itemMapper.toEntity(itemDTO);
+        Item savedItem = itemRepository.save(item);
+        log.info("item created id {}", savedItem.getId());
+        return Optional.of(itemMapper.toDto(savedItem));
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<ItemDTO> createItems(List<ItemDTO> itemDTOs) {
-        try {
-            log.info("create items");
-            List<Item> items = itemDTOs.stream()
-                    .map(itemMapper::toEntity)
-                    .collect(Collectors.toList());
-            List<Item> savedItems = itemRepository.saveAll(items);
-            return savedItems.stream()
-                    .map(itemMapper::toDto)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            log.error("Unexpected error while creating item", e);
-            throw new RuntimeException(e);
-        }
-
+        log.info("create items");
+        List<Item> items = itemDTOs.stream()
+                .map(itemMapper::toEntity)
+                .collect(Collectors.toList());
+        List<Item> savedItems = itemRepository.saveAll(items);
+        return savedItems.stream()
+                .map(itemMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override

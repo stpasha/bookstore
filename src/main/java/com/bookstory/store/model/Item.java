@@ -3,6 +3,8 @@ package com.bookstory.store.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.validation.constraints.Min;
+
 @Entity
 @Table(name = "items", schema = "storedata")
 @Getter
@@ -25,6 +27,7 @@ public class Item {
     private Order order;
 
     @Column(name = "quantity")
+    @Min(value = 0, message = "Quantity must be greater than or equal to 0")
     private Long quantity;
 
     @OneToOne(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
