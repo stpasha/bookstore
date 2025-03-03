@@ -1,14 +1,13 @@
 package com.bookstory.store.web.dto;
 
-import com.bookstory.store.model.Item;
-import java.math.BigDecimal;
-
 import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,7 +17,7 @@ import javax.validation.constraints.Size;
 @ToString
 public class ProductDTO {
     private Long id;
-    private Item item;
+    private List<ItemDTO> items;
     @Size(max = 255, message = "Should be not greater than 255 symbols")
     @NotEmpty
     @NotNull

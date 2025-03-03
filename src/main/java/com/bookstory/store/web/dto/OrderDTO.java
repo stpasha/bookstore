@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,4 +23,5 @@ public class OrderDTO {
     private LocalDateTime updatedAt;
     @ToString.Exclude
     private List<ItemDTO> items;
+    private BigDecimal totalSum;
 }

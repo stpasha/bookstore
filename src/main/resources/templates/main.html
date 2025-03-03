@@ -3,6 +3,31 @@
 
 <head>
     <title>Витрина товаров</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll("form").forEach(form => {
+                form.addEventListener("click", function (event) {
+                    if (event.target.id === "plus" || event.target.id === "minus") {
+                        event.preventDefault(); // Предотвращаем отправку формы
+
+                        let quantitySpan = form.querySelector("#quantity-planned");
+                        let quantityInput = form.querySelector("#product-quantity");
+                        let availableQuantity = parseInt(form.querySelector("#quantity-avilable").textContent, 10);
+                        let currentQuantity = parseInt(quantitySpan.textContent, 10);
+
+                        if (event.target.id === "plus" && currentQuantity < availableQuantity) {
+                            currentQuantity++;
+                        } else if (event.target.id === "minus" && currentQuantity > 0) {
+                            currentQuantity--;
+                        }
+
+                        quantitySpan.textContent = currentQuantity;
+                        quantityInput.value = currentQuantity;
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -75,12 +100,22 @@
                 </tr>
                 <tr>
                     <td>
-                        <form th:action="@{'/items/' + ${product.id}}" method="post">
-                            <button name="action" value="minus">-</button>
-                            <span th:text="${product.quantityAvailable}"></span>
-                            <button name="action" value="plus">+</button>
-                            <button name="action" value="plus" th:if="${product.quantity == 0}" style="float:right;">В корзину</button>
-                        </form>
+
+                        <form th:action="@{'/items/' + ${product.id} + '/add'}" th:object="${product}" method="post">
+                                <input type="hidden" id="product-quantity" th:value="${product.quantity == null ? 0 : product.quantity}" name="quantity" />
+                                <input type="hidden" id="product-id" th:value="${product.id}" name="id" />
+                                <div>
+                                    <span>Количество доступных:</span>
+                                    <span id="quantity-avilable" th:text="${product.quantityAvailable}"></span>
+                                </div>
+                                <div>
+                                    <span>Количество выбранных:</span>
+                                    <span id="quantity-planned" th:text="${product.quantity == null ? 0 : product.quantity}"></span>
+                                </div>
+                                <button id="minus" name="minusq" value="minus">-</button>
+                                <button id="plus" name="plusq" value="plus">+</button>
+                                <button name="action" value="add" style="float:right;">В корзину</button>
+                            </form>
                     </td>
                 </tr>
             </table>

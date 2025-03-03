@@ -30,6 +30,7 @@ public class Item {
     @Min(value = 0, message = "Quantity must be greater than or equal to 0")
     private Long quantity;
 
-    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 }

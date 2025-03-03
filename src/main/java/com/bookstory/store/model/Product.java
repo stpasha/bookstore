@@ -1,17 +1,19 @@
 package com.bookstory.store.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
 
 import javax.validation.constraints.Min;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "products", schema = "storedata")
 @Getter
 @Setter
-@ToString(exclude = "item")
+@ToString(exclude = "items")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,9 +26,9 @@ public class Product {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "item_id", nullable = false, unique = true)
-    private Item item;
+    @JsonIgnore
+    @OneToMany(mappedBy = "product")
+    private List<Item> items;
 
     @Column(name = "title", nullable = false)
     private String title;

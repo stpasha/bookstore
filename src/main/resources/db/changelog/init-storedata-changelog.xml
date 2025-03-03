@@ -144,4 +144,32 @@
         </rollback>
     </changeSet>
 
+    <changeSet id="7" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM information_schema.columns
+                    WHERE table_schema = 'storedata' AND table_name = 'products' AND column_name = 'item_id';
+                </sqlCheck>
+            </not>
+        </preConditions>
+        <dropColumn tableName="products" columnName="item_id" schemaName="storedata"/>
+        <rollback>
+            <addColumn tableName="products" schemaName="storedata">
+                <column name="item_id" type="BIGINT"/>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="8" author="nomatter" runOnChange="true">
+        <addForeignKeyConstraint baseTableName="items" baseColumnNames="product_id"
+                                 referencedTableName="products" referencedColumnNames="product_id"
+                                 constraintName="fk_items_products"
+                                 schemaName="storedata"/>
+        <rollback>
+            <dropForeignKeyConstraint baseTableName="items" constraintName="fk_items_products"/>
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>
