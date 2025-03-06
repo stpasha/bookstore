@@ -20,7 +20,7 @@
             </h2>
             <table>
                 <tr th:each="item : ${order.getItems()}">
-                    <td th:text="${item.title + ' (' + item.quantity + ' шт.) ' + (item.price * item.quantity) + ' руб.'}"></td>
+                    <td th:text="${item.getProduct().getTitle() + ' (' + item.getQuantity() + ' шт.) ' + (item.getProduct().getPrice() * item.getQuantity()) + ' руб.'}"></td>
                 </tr>
             </table>
             <p>

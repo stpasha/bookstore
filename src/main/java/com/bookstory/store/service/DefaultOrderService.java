@@ -1,15 +1,16 @@
 package com.bookstory.store.service;
 
+import com.bookstory.store.model.Item;
 import com.bookstory.store.model.Order;
 import com.bookstory.store.persistence.ItemRepository;
 import com.bookstory.store.persistence.OrderRepository;
 import com.bookstory.store.persistence.ProductRepository;
 import com.bookstory.store.web.dto.OrderDTO;
 import com.bookstory.store.web.mapper.OrderMapper;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,17 +33,23 @@ public class DefaultOrderService implements OrderService {
         if (orderEntity.getItems() != null) {
             orderEntity.getItems().forEach(item -> {
                 item.setOrder(orderEntity);
-                item.setProduct(productRepository.findById(item.getProduct().getId()).get());
+                item.setProduct(productRepository.findById(item.getProduct().getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + item.getProduct().getId())));
             });
         }
-        Order savedOrder = orderRepository.save(orderEntity);
         orderEntity.getItems().forEach(item -> {
-            itemRepository.save(item);
+            Long quantity = item.getQuantity();
+            Long availableQuatity = item.getProduct().getQuantityAvailable();
+            if (quantity != null && availableQuatity != null) {
+                item.getProduct().setQuantityAvailable(Math.subtractExact(availableQuatity,quantity));
+            }
         });
+        Order savedOrder = orderRepository.save(orderEntity);
         return Optional.of(orderMapper.toDto(savedOrder));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<OrderDTO> getOrder(Long id) {
         log.info("get order by id {}", id);
         return orderRepository.findById(id).map(orderMapper::toDto);

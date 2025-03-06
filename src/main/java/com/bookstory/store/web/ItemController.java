@@ -37,34 +37,38 @@ public class ItemController {
                                 @RequestParam long quantity,
                                 @ModelAttribute("cart") CartDTO cart) {
         log.info("Adding product {} to cart with quantity {}", id, quantity);
+        if (quantity < 1) {
+            return "redirect:/products";
+        }
 
         cart.getItems().compute(id, (productId, existingItem) -> {
             if (existingItem == null) {
-                // Если товара нет в корзине, добавляем новый
                 return ItemDTO.builder()
                         .product(productService.getProduct(id).get())
                         .quantity(quantity)
                         .build();
             } else {
-                // Если товар уже есть, увеличиваем его количество на переданное значение
                 existingItem.setQuantity(existingItem.getQuantity() + quantity);
                 return existingItem;
             }
         });
 
-        return "redirect:/items"; // Перенаправляем на страницу с товарами
+        return "redirect:/items";
     }
 
     @PostMapping("/remove")
     public String removeItemFromCart(@RequestParam Long productId, @ModelAttribute("cart") CartDTO cart) {
         if (cart.getItems().containsKey(productId)) {
-            ItemDTO item = cart.getItems().remove(productId);
+            cart.getItems().remove(productId);
             log.info("Removed product {} from cart", productId);
         } else {
             log.warn("Attempted to remove non-existing product {}", productId);
         }
+        if (cart.getItems().isEmpty()) {
+            return "redirect:/products";
+        }
 
-        return "redirect:/items"; // Перенаправляем на страницу с товарами
+        return "redirect:/items";
     }
 
     @GetMapping
