@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.Size;
 
-
 @Controller
 @RequestMapping("/products")
 @Slf4j
@@ -23,37 +22,37 @@ public class ProductController {
 
     private final ProductService productService;
 
-
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
     @GetMapping
     public String listProducts(@PageableDefault(size = 10, sort = "id") Pageable pageable,
-                               @Size(max = 255, message = "Title must be less than 100 characters")
-                               @RequestParam(value = "search", required = false) String title,
+                               @RequestParam(value = "search", required = false)
+                               @Size(max = 255, message = "Title must be less than 255 characters") String title,
                                Model model) {
         log.info("list of products with params title {}, pageable {}", title, pageable);
         Page<ProductDTO> productPage = productService.getAllProducts(title, pageable);
+
         model.addAttribute("products", productPage.getContent());
-        model.addAttribute("paging", productPage);
+        model.addAttribute("productPage", productPage);
         model.addAttribute("search", title);
+
         return "main";
     }
 
     @GetMapping("/{id}")
-    public String getProduct(@PathVariable(value = "id") Long id, Model model) {
-        return productService.getProduct(id).map(
-                product -> {
+    public String getProduct(@PathVariable Long id, Model model) {
+        return productService.getProduct(id)
+                .map(product -> {
                     model.addAttribute("product", product);
                     log.info("products queried {}", product);
                     return "item";
-                }).orElseGet(
-                () -> {
+                })
+                .orElseGet(() -> {
                     model.addAttribute("error", "Product not found");
                     log.error("no value for productId {}", id);
                     return "error";
-                }
-        );
+                });
     }
 }

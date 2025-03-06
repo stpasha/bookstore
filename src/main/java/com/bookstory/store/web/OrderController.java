@@ -7,10 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
 @RequestMapping("/orders")
 @Slf4j
+@SessionAttributes("cart")
 public class OrderController {
 
     final private OrderService orderService;
@@ -40,7 +42,10 @@ public class OrderController {
     }
 
     @PostMapping
-    public String createOrder(@SessionAttribute("cart") CartDTO cart, Model model) {
+    public String createOrder(@SessionAttribute("cart") CartDTO cart, Model model,  SessionStatus sessionStatus) {
+        if (cart.getItems().isEmpty()) {
+            return "main";
+        }
         OrderDTO order = new OrderDTO();
         order.setItems(cart.getItems().values().stream().toList());
         order.setComment("order");
@@ -48,10 +53,12 @@ public class OrderController {
             log.info("created order: {}", orderDTO);
             model.addAttribute("order", orderDTO);
             model.addAttribute("newOrder", true);
+            sessionStatus.setComplete();
             return "order";
         }).orElseGet(() -> {
             model.addAttribute("error", "Order is not created");
             log.error("Order is not created {}", order);
+            sessionStatus.setComplete();
             return "error";
         });
     }

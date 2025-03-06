@@ -3,40 +3,13 @@
 
 <head>
     <title>Витрина товаров</title>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll("form").forEach(form => {
-                form.addEventListener("click", function (event) {
-                    if (event.target.id === "plus" || event.target.id === "minus") {
-                        event.preventDefault(); // Предотвращаем отправку формы
-
-                        let quantitySpan = form.querySelector("#quantity-planned");
-                        let quantityInput = form.querySelector("#product-quantity");
-                        let availableQuantity = parseInt(form.querySelector("#quantity-avilable").textContent, 10);
-                        let currentQuantity = parseInt(quantitySpan.textContent, 10);
-
-                        if (event.target.id === "plus" && currentQuantity < availableQuantity) {
-                            currentQuantity++;
-                        } else if (event.target.id === "minus" && currentQuantity > 0) {
-                            currentQuantity--;
-                        }
-
-                        quantitySpan.textContent = currentQuantity;
-                        quantityInput.value = currentQuantity;
-                    }
-                });
-            });
-        });
-    </script>
+    <script src="scripts.js"></script>
 </head>
 
 <body>
-<a href="/orders" style="float:right;">
-    <b>ЗАКАЗЫ &cudarrr;</b>
-</a>
-<a href="/items" style="float:right;">
-    <b>КОРЗИНА &cudarrr;</b>
-</a>
+<a href="/orders" style="float:right;"><b>ЗАКАЗЫ &cudarrr;</b></a>
+<a href="/items" style="float:right;"><b>КОРЗИНА &cudarrr;</b></a>
+
 <table style="width:70%;margin-left:auto;margin-right:auto;">
     <tr>
         <td>
@@ -55,67 +28,60 @@
                     </select>
                 </p>
                 <p>
-                    <label for="pageSize">Число товаров: </label>
-                    <select id="pageSize" name="pageSize" onchange="this.form.submit()">
-                        <option value="5" th:selected="${paging.pageable.pageSize == 5}">5</option>
-                        <option value="10" th:selected="${paging.pageable.pageSize == 10}">10</option>
-                        <option value="20" th:selected="${paging.pageable.pageSize == 20}">20</option>
-                        <option value="50" th:selected="${paging.pageable.pageSize == 50}">50</option>
-                        <option value="100" th:selected="${paging.pageable.pageSize == 100}">100</option>
+                    <label for="size">Число товаров: </label>
+                    <select id="size" name="size" onchange="this.form.submit()">
+                        <option value="5" th:selected="${productPage.size == 5}">5</option>
+                        <option value="10" th:selected="${productPage.size == 10}">10</option>
+                        <option value="20" th:selected="${productPage.size == 20}">20</option>
+                        <option value="50" th:selected="${productPage.size == 50}">50</option>
+                        <option value="100" th:selected="${productPage.size == 100}">100</option>
                     </select>
                 </p>
+
                 <p>
-
-                    <button th:if="${paging.hasPrevious()}" name="pageNumber" th:value="${paging.number - 1}">&lt;</button>
-
-
-                    <span th:text="${'Страница: ' + (paging.number + 1)}"></span>
-
-
-                    <button th:if="${paging.hasNext()}" name="pageNumber" th:value="${paging.number + 1}">&gt;</button>
+                    <button th:if="${productPage.hasPrevious()}" name="page" th:value="${productPage.number - 1}">&lt;</button>
+                    <span th:text="${'Страница: ' + (productPage.number + 1) + ' из ' + productPage.totalPages}"></span>
+                    <button th:if="${productPage.hasNext()}" name="page" th:value="${productPage.number + 1}">&gt;</button>
                 </p>
+
+                <input type="hidden" name="pageNumber" th:value="${productPage.number}">
             </form>
         </td>
     </tr>
-    <tr th:each="productsRow : ${products}">
-        <td th:each="product : ${productsRow}">
+    <tr th:each="product : ${products}">
+        <td>
             <table>
                 <tr>
                     <td>
                         <a th:href="@{'/products/' + ${product.id}}">
-                            <img width="300" height="300"  th:src="${product.imageUrl}"/>
+                            <img width="300" height="300" th:src="${product.imageUrl}"/>
                         </a>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <b th:text="${product.title}"></b>
-                    </td>
-                    <td>
-                        <b th:text="${product.price} + ' руб.'"></b>
-                    </td>
+                    <td><b th:text="${product.title}"></b></td>
+                    <td><b th:text="${product.price} + ' руб.'"></b></td>
                 </tr>
                 <tr>
                     <td th:text="${product.description}"></td>
                 </tr>
                 <tr>
                     <td>
-
-                        <form th:action="@{'/items/' + ${product.id} + '/add'}" th:object="${product}" method="post">
-                                <input type="hidden" id="product-quantity" th:value="${product.quantity == null ? 0 : product.quantity}" name="quantity" />
-                                <input type="hidden" id="product-id" th:value="${product.id}" name="id" />
-                                <div>
-                                    <span>Количество доступных:</span>
-                                    <span id="quantity-avilable" th:text="${product.quantityAvailable}"></span>
-                                </div>
-                                <div>
-                                    <span>Количество выбранных:</span>
-                                    <span id="quantity-planned" th:text="${product.quantity == null ? 0 : product.quantity}"></span>
-                                </div>
-                                <button id="minus" name="minusq" value="minus">-</button>
-                                <button id="plus" name="plusq" value="plus">+</button>
-                                <button name="action" value="add" style="float:right;">В корзину</button>
-                            </form>
+                        <form th:action="@{'/items/' + ${product.id} + '/add'}" method="post">
+                            <input type="hidden" id="product-quantity" name="quantity" th:value="${product.quantity ?: 0}"/>
+                            <input type="hidden" name="id" th:value="${product.id}"/>
+                            <div>
+                                <span>Количество доступных:</span>
+                                <span id="quantity-available" th:text="${product.quantityAvailable}"></span>
+                            </div>
+                            <div>
+                                <span>Количество выбранных:</span>
+                                <span id="quantity-planned" th:text="${product.quantity ?: 0}"></span>
+                            </div>
+                            <button id="minus">-</button>
+                            <button id="plus">+</button>
+                            <button name="action" value="add" style="float:right;">В корзину</button>
+                        </form>
                     </td>
                 </tr>
             </table>
@@ -123,5 +89,4 @@
     </tr>
 </table>
 </body>
-
 </html>
