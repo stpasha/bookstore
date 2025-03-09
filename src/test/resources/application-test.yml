@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: store
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        # Форматировать SQL для удобства в логах
+        format_sql: true
+        # Выводить SQL в консоль
+        show_sql: true
+        ddl-auto: none
+  datasource:
+    init: never
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # Максимальное количество соединений в пуле
+      maximum-pool-size: 10
+      # Минимально неактивных соединений
+      minimum-idle: 2
+      # Время активности соединения если min-idle<
+      idle-timeout: 30000
+      #Макс таймаут
+      max-lifetime: 1800000

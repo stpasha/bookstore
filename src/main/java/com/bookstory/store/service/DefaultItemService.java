@@ -3,16 +3,13 @@ package com.bookstory.store.service;
 import com.bookstory.store.model.Item;
 import com.bookstory.store.persistence.ItemRepository;
 import com.bookstory.store.web.dto.ItemDTO;
-import com.bookstory.store.web.dto.OrderDTO;
 import com.bookstory.store.web.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,16 +23,6 @@ public class DefaultItemService implements ItemService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Optional<ItemDTO> createItem(ItemDTO itemDTO) {
-        log.info("create item {}", itemDTO);
-        Item item = itemMapper.toEntity(itemDTO);
-        Item savedItem = itemRepository.save(item);
-        log.info("item created id {}", savedItem.getId());
-        return Optional.of(itemMapper.toDto(savedItem));
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public List<ItemDTO> createItems(List<ItemDTO> itemDTOs) {
         log.info("create items");
         List<Item> items = itemDTOs.stream()
@@ -45,12 +32,5 @@ public class DefaultItemService implements ItemService {
         return savedItems.stream()
                 .map(itemMapper::toDto)
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ItemDTO> getItemsByOrder(OrderDTO order) {
-        log.info("get items for order id {}", order.getId());
-        Optional<List<Item>> items = itemRepository.findByOrderId(order.getId());
-        return items.map(itemMapper::toDtoList).orElseGet(ArrayList::new);
     }
 }

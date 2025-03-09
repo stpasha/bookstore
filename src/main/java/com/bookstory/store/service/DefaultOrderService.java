@@ -1,8 +1,6 @@
 package com.bookstory.store.service;
 
-import com.bookstory.store.model.Item;
 import com.bookstory.store.model.Order;
-import com.bookstory.store.persistence.ItemRepository;
 import com.bookstory.store.persistence.OrderRepository;
 import com.bookstory.store.persistence.ProductRepository;
 import com.bookstory.store.web.dto.OrderDTO;
@@ -22,7 +20,6 @@ public class DefaultOrderService implements OrderService {
 
     final private OrderRepository orderRepository;
     final private OrderMapper orderMapper;
-    final private ItemRepository itemRepository;
     final private ProductRepository productRepository;
 
     @Override
@@ -41,7 +38,7 @@ public class DefaultOrderService implements OrderService {
             Long quantity = item.getQuantity();
             Long availableQuatity = item.getProduct().getQuantityAvailable();
             if (quantity != null && availableQuatity != null) {
-                item.getProduct().setQuantityAvailable(Math.subtractExact(availableQuatity,quantity));
+                item.getProduct().setQuantityAvailable(Math.subtractExact(availableQuatity, quantity));
             }
         });
         Order savedOrder = orderRepository.save(orderEntity);

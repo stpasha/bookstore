@@ -95,7 +95,7 @@ public class ProductController {
             return "error";
         }
 
-        return "main";
+        return "redirect:/products";
     }
 
 }

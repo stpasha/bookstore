@@ -4,6 +4,9 @@
 </head>
 <body>
 <h1>Error Details</h1>
-<p>Error: <span th:text="${error}"></span></p>
+<p>Timestamp: <span th:text="${errorDetails.timestamp}"></span></p>
+<p>Message: <span th:text="${errorDetails.message}"></span></p>
+<p>Details: <span th:text="${errorDetails.details}"></span></p>
+<a th:href="@{/products}" >Назад</a>
 </body>
 </html>

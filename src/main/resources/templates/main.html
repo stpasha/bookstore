@@ -27,6 +27,7 @@
                         <option value="title" th:selected="${sort=='title'}">по алфавиту</option>
                         <option value="price" th:selected="${sort=='price'}">по цене</option>
                     </select>
+                    <input type="hidden" name="direction" value="ASC">
                 </p>
                 <p>
                     <label for="size">Число товаров: </label>
