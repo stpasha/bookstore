@@ -16,8 +16,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ModelAndView handleGlobalException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-        ModelAndView modelAndView = new ModelAndView("error");
-        modelAndView.addObject("oops", errorDetails);
+        ModelAndView modelAndView = new ModelAndView("oops");
+        modelAndView.addObject("errorDetails", errorDetails);
         log.error("Error occured {}", ex.getMessage(), ex);
         return modelAndView;
     }
@@ -25,8 +25,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ModelAndView handleGlobalException(RuntimeException ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-        ModelAndView modelAndView = new ModelAndView("error");
-        modelAndView.addObject("oops", errorDetails);
+        ModelAndView modelAndView = new ModelAndView("oops");
+        modelAndView.addObject("errorDetails", errorDetails);
         log.error("Error occured {}", ex.getMessage(), ex);
         return modelAndView;
     }

@@ -6,6 +6,7 @@ import com.bookstory.store.persistence.OrderRepository;
 import com.bookstory.store.util.TestDataFactory;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +23,11 @@ public class OrderRepositoryTest {
 
     @Autowired
     TestDataFactory testDataFactory;
+
+    @BeforeEach
+    public void setUp() {
+        orderRepository.deleteAll();
+    }
 
     @Test
     @Transactional

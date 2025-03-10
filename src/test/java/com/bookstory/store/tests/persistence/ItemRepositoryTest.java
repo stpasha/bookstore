@@ -9,6 +9,7 @@ import com.bookstory.store.persistence.OrderRepository;
 import com.bookstory.store.persistence.ProductRepository;
 import com.bookstory.store.util.TestDataFactory;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,6 +32,12 @@ public class ItemRepositoryTest {
 
     @Autowired
     private TestDataFactory testDataFactory;
+
+    @BeforeEach
+    public void setUp() {
+        orderRepository.deleteAll();
+        itemRepository.deleteAll();
+    }
 
     @Test
     @Transactional
