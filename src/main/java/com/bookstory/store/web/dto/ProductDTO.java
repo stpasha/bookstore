@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString
+@EqualsAndHashCode
 public class ProductDTO {
     private Long id;
     private List<ItemDTO> items;
