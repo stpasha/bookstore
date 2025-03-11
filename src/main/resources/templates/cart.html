@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <script src="../scripts.js" defer></script>
+    <script src="../cart.js" defer></script>
     <title>Корзина товаров</title>
 </head>
 <body>
@@ -32,15 +32,21 @@
                 <tr>
                     <td>
                         <form th:action="@{/items/remove}" method="post">
-                            <input type="hidden" id="product-quantity" name="quantity" th:value="${product.quantity ?: 0}"/>
-                            <input type="hidden" name="id" th:value="${product.id}"/>
+                            <input type="hidden" name="productId" th:value="${item.key}"/>
+                            <span th:text="${item.value.quantity}"></span>
+                            <button type="submit" name="action" value="delete" style="float:right;">&cross;</button>
+                        </form>
+                        <form class="changeQuant">
+
+                            <input type="hidden" id="product-quantity" name="quantity" th:value="${item.value.quantity ?: 0}"/>
+                            <input type="hidden" id="productId" th:value="${item.value.product.id}"/>
                             <div>
                                 <span>Количество доступных:</span>
-                                <span id="quantity-available" th:text="${product.quantityAvailable}"></span>
+                                <span id="quantity-available" th:text="${item.value.product.quantityAvailable}"></span>
                             </div>
                             <div>
                                 <span>Количество выбранных:</span>
-                                <span id="quantity-planned" th:text="${product.quantity ?: 0}"></span>
+                                <span id="quantity-planned" th:text="${item.value.quantity ?: 0}"></span>
                             </div>
                             <button id="minus">-</button>
                             <button id="plus">+</button>

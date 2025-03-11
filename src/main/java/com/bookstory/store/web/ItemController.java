@@ -5,6 +5,7 @@ import com.bookstory.store.service.ProductService;
 import com.bookstory.store.web.dto.CartDTO;
 import com.bookstory.store.web.dto.ItemDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -79,6 +80,28 @@ public class ItemController {
                 .sum();
         model.addAttribute("totalPrice", totalPrice);
         log.info("Displaying cart: {}", cart);
-        return "cart"; // Представление корзины
+        return "cart";
+    }
+
+    @PutMapping("/{id}/product/{quantity}")
+    @ResponseBody
+    public ResponseEntity<Long> modifyQuantity(@ModelAttribute("cart") CartDTO cart,
+                                               @PathVariable("id") Long id,
+                                               @PathVariable("quantity") int quantity) {
+        if (!cart.getItems().containsKey(id)) {
+            log.warn("Attempted to modify quantity for non-existing product {}", id);
+            return ResponseEntity.badRequest().build();
+        }
+
+        ItemDTO item = cart.getItems().get(id);
+        long newQuantity = item.getQuantity() + quantity;
+
+        if (newQuantity < 1) {
+            log.warn("Attempted to set quantity below 1 for product {}", id);
+            return ResponseEntity.badRequest().build();
+        }
+
+        item.setQuantity(newQuantity);
+        return ResponseEntity.ok(newQuantity);
     }
 }
