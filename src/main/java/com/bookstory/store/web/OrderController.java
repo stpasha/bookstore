@@ -44,7 +44,7 @@ public class OrderController {
     @PostMapping
     public String createOrder(@SessionAttribute("cart") CartDTO cart, Model model,  SessionStatus sessionStatus) {
         if (cart.getItems().isEmpty()) {
-            return "main";
+            return "redirect:/products";
         }
         OrderDTO order = new OrderDTO();
         order.setItems(cart.getItems().values().stream().toList());
