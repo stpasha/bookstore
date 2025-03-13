@@ -80,7 +80,7 @@ class DefaultControllerIT {
                             .param("quantity", "2")
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                     .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrl("/items"));
+                    .andExpect(redirectedUrl("/products"));
         }
 
         @Test

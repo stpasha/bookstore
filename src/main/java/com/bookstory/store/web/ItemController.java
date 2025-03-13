@@ -54,7 +54,7 @@ public class ItemController {
             }
         });
 
-        return "redirect:/items";
+        return "redirect:/products";
     }
 
     @PostMapping("/remove")
