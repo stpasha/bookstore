@@ -22,6 +22,7 @@ services:
     volumes:
       # Сохранение данных между перезапусками
       - postgres_data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d/init-script.sql:/docker-entrypoint-initdb.d/init-script.sql
     ports:
       - "5432:5432"
     healthcheck:
