@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ModelAndView handleGlobalException(RuntimeException ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false));
-        ModelAndView modelAndView = new ModelAndView("oops");
+        ModelAndView modelAndView = new ModelAndView("error");
         modelAndView.addObject("errorDetails", errorDetails);
         log.error("Error occured {}", ex.getMessage(), ex);
         return modelAndView;

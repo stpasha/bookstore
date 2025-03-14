@@ -12,7 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.stream.Stream;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Validated
 public class DefaultProductService implements ProductService {
 
     private final ProductRepository repository;
@@ -56,19 +59,20 @@ public class DefaultProductService implements ProductService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addProducts(Stream<NewProductDTO> productList) {
-        List<Product> productEntities = productList.map(newProductDTO -> {
-            try {
-                if (newProductDTO.getBaseImage() != null && !newProductDTO.getBaseImage().isBlank()) {
-                    String imageName = imageService.saveImage(newProductDTO.getImageName(),
-                            Base64.getDecoder().decode(newProductDTO.getBaseImage()));
-                    newProductDTO.setImageName(imageName);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            return newProductMapper.toEntity(newProductDTO);
-        }).toList();
+    public void addProducts(List<@Valid NewProductDTO> productList) {
+        List<Product> productEntities = productList.stream()
+                .map(newProductDTO -> {
+                    try {
+                        if (newProductDTO.getBaseImage() != null && !newProductDTO.getBaseImage().isBlank()) {
+                            String imageName = imageService.saveImage(newProductDTO.getImageName(),
+                                    Base64.getDecoder().decode(newProductDTO.getBaseImage()));
+                            newProductDTO.setImageName(imageName);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return newProductMapper.toEntity(newProductDTO);
+                }).collect(Collectors.toList());
         repository.saveAll(productEntities);
         log.info("Added {} products", productEntities.size());
     }

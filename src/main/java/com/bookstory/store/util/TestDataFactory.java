@@ -32,7 +32,7 @@ public class TestDataFactory {
         return ProductDTO.builder()
                 .id(ThreadLocalRandom.current().nextLong(1, 24))
                 .title(faker.book().title())
-                .description(faker.lorem().sentence())
+                .description(faker.lorem().maxLengthSentence(255))
                 .imageUrl(faker.internet().image())
                 .price(BigDecimal.valueOf(faker.number().randomDouble(2, 5, 500)))
                 .quantityAvailable(ThreadLocalRandom.current().nextLong(0, 101))
@@ -43,7 +43,7 @@ public class TestDataFactory {
     public NewProductDTO createNewProductDTO() {
         return NewProductDTO.builder()
                 .title(faker.book().title())
-                .description(faker.lorem().sentence())
+                .description(faker.lorem().maxLengthSentence(255))
                 .imageName(faker.file().fileName())
                 .price(BigDecimal.valueOf(faker.number().randomDouble(2, 5, 500)))
                 .quantityAvailable(ThreadLocalRandom.current().nextLong(0, 101))
@@ -53,7 +53,7 @@ public class TestDataFactory {
 
     public Order createOrder() {
         return Order.builder()
-                .comment(faker.lorem().sentence())
+                .comment(faker.lorem().maxLengthSentence(255))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .items(new ArrayList<>())
@@ -64,7 +64,7 @@ public class TestDataFactory {
         List<ItemDTO> items = createItemDTOs(3);
         return new OrderDTO(
                 null,
-                faker.lorem().sentence(),
+                faker.lorem().maxLengthSentence(255),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 items,
@@ -115,7 +115,7 @@ public class TestDataFactory {
         return IntStream.range(0, count)
                 .mapToObj(i -> Product.builder()
                         .title(faker.book().title())
-                        .description(faker.lorem().sentence())
+                        .description(faker.lorem().maxLengthSentence(255))
                         .imageUrl(faker.internet().image())
                         .price(BigDecimal.valueOf(faker.number().randomDouble(2, 5, 500)))
                         .quantityAvailable(ThreadLocalRandom.current().nextLong(0, 101))
@@ -149,7 +149,8 @@ public class TestDataFactory {
 
     public CartDTO createCartDTO() {
         List<ItemDTO> items = createItemDTOs(3);
-        return new CartDTO(items.stream().collect(Collectors.toMap(itemDTO -> itemDTO.getProduct().getId(), item -> item)));
+        return new CartDTO(items.stream().collect(Collectors.toMap(itemDTO -> itemDTO.getProduct().getId(), item -> item)),
+                faker.lorem().maxLengthSentence(255));
     }
 
 

@@ -3,27 +3,25 @@ package com.bookstory.store.tests.service;
 import com.bookstory.store.annotations.StoreTestAnnotation;
 import com.bookstory.store.model.Product;
 import com.bookstory.store.persistence.ProductRepository;
-import com.bookstory.store.service.DefaultProductService;
 import com.bookstory.store.service.ImageService;
+import com.bookstory.store.service.ProductService;
 import com.bookstory.store.util.TestDataFactory;
 import com.bookstory.store.web.dto.NewProductDTO;
 import com.bookstory.store.web.dto.ProductDTO;
 import com.bookstory.store.web.mapper.NewProductMapper;
 import com.bookstory.store.web.mapper.ProductMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -40,16 +38,12 @@ public class ProductServiceTest {
     @Autowired
     private NewProductMapper newProductMapper;
 
+    @MockitoBean
     private ProductRepository productRepository;
+    @MockitoBean
     private ImageService imageService;
-    private DefaultProductService productService;
-
-    @BeforeEach
-    void setUp() {
-        productRepository = mock(ProductRepository.class);
-        imageService = mock(ImageService.class);
-        productService = new DefaultProductService(productRepository, productMapper, newProductMapper, imageService);
-    }
+    @Autowired
+    private ProductService productService;
 
     @Test
     public void getAllProducts_ShouldReturnPagedProducts_WhenNoFilter() {
@@ -105,11 +99,10 @@ public class ProductServiceTest {
         List<NewProductDTO> newProductDTOs = testDataFactory.createNewProductDTOs(1).stream()
                 .peek(dto -> dto.setBaseImage(Base64.getEncoder().encodeToString(new byte[10])))
                 .toList();
-        Stream<NewProductDTO> productStream = newProductDTOs.stream();
 
         when(imageService.saveImage(anyString(), any(byte[].class))).thenThrow(new IOException("Failed to process image"));
 
-        assertThrows(RuntimeException.class, () -> productService.addProducts(productStream));
+        assertThrows(RuntimeException.class, () -> productService.addProducts(newProductDTOs));
 
         verify(productRepository, never()).saveAll(anyList());
     }

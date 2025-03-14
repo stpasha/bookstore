@@ -3,7 +3,7 @@ package com.bookstory.store.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 
 @Entity
 @Table(name = "items", schema = "storedata")

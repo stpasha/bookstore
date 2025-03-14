@@ -9,13 +9,16 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @AllArgsConstructor
+@Validated
 public class DefaultOrderService implements OrderService {
 
     final private OrderRepository orderRepository;
@@ -24,7 +27,7 @@ public class DefaultOrderService implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Optional<OrderDTO> createOrder(OrderDTO order) {
+    public Optional<OrderDTO> createOrder(@Valid OrderDTO order) {
         log.info("create order {}", order);
         Order orderEntity = orderMapper.toEntity(order);
         if (orderEntity.getItems() != null) {

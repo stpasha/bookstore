@@ -1,16 +1,6 @@
 spring:
   application:
     name: store
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    properties:
-      hibernate:
-        # Форматировать SQL для удобства в логах
-        format_sql: true
-        # Выводить SQL в консоль
-        show_sql: true
-        ddl-auto: none
-        default_schema: storedata
   datasource:
     init: never
     # Указываем имя контейнера в URL!

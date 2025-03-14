@@ -3,9 +3,8 @@ package com.bookstory.store.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.math.BigDecimal;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -14,7 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
@@ -88,7 +88,7 @@ public class ProductController {
                             .price(new BigDecimal(line[2]))
                             .imageName(line[3])
                             .baseImage(line[4])
-                            .build()));
+                            .build()).toList());
 
         } catch (IOException | CsvException e) {
             model.addAttribute("error", "Error during upload of a file: " + e.getMessage());

@@ -3,7 +3,7 @@ package com.bookstory.store.web.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 
 @Getter
 @Setter

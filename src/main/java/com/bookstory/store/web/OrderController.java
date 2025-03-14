@@ -42,13 +42,15 @@ public class OrderController {
     }
 
     @PostMapping
-    public String createOrder(@SessionAttribute("cart") CartDTO cart, Model model,  SessionStatus sessionStatus) {
+    public String createOrder(@SessionAttribute("cart") CartDTO cart, @RequestParam(value = "comment", required = false,
+                                          defaultValue = "") String comment,
+                              Model model,  SessionStatus sessionStatus) {
         if (cart.getItems().isEmpty()) {
             return "redirect:/products";
         }
         OrderDTO order = new OrderDTO();
+        order.setComment(comment);
         order.setItems(cart.getItems().values().stream().toList());
-        order.setComment("order");
         return orderService.createOrder(order).map(orderDTO -> {
             log.info("created order: {}", orderDTO);
             model.addAttribute("order", orderDTO);

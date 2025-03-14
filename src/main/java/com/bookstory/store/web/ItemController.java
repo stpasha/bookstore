@@ -8,14 +8,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.HashMap;
 
 @Controller
 @RequestMapping("/items")
 @Slf4j
 @SessionAttributes("cart")
+@Validated
 public class ItemController {
 
     private final OrderService orderService;
@@ -36,7 +39,7 @@ public class ItemController {
     @PostMapping("/{id}/add")
     public String addItemToCart(@PathVariable("id") Long id,
                                 @RequestParam long quantity,
-                                @ModelAttribute("cart") CartDTO cart) {
+                                @Valid @ModelAttribute("cart") CartDTO cart) {
         log.info("Adding product {} to cart with quantity {}", id, quantity);
         if (quantity < 1) {
             return "redirect:/products";
@@ -58,7 +61,7 @@ public class ItemController {
     }
 
     @PostMapping("/remove")
-    public String removeItemFromCart(@RequestParam Long productId, @ModelAttribute("cart") CartDTO cart) {
+    public String removeItemFromCart(@RequestParam Long productId, @Valid @ModelAttribute("cart") CartDTO cart) {
         if (cart.getItems().containsKey(productId)) {
             cart.getItems().remove(productId);
             log.info("Removed product {} from cart", productId);
@@ -73,7 +76,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public String viewCart(Model model, @ModelAttribute("cart") CartDTO cart) {
+    public String viewCart(Model model, @Valid @ModelAttribute("cart") CartDTO cart) {
         model.addAttribute("cart", cart); // Передаем cart, а не cart.getItems().values()
         double totalPrice = cart.getItems().values().stream()
                 .mapToDouble(i -> i.getProduct().getPrice().doubleValue() * i.getQuantity())
@@ -85,7 +88,7 @@ public class ItemController {
 
     @PutMapping("/{id}/product/{quantity}")
     @ResponseBody
-    public ResponseEntity<Long> modifyQuantity(@ModelAttribute("cart") CartDTO cart,
+    public ResponseEntity<Long> modifyQuantity(@Valid @ModelAttribute("cart") CartDTO cart,
                                                @PathVariable("id") Long id,
                                                @PathVariable("quantity") int quantity) {
         if (!cart.getItems().containsKey(id)) {
