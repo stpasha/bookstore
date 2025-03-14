@@ -24,7 +24,6 @@ public class OrderDTO {
     private LocalDateTime updatedAt;
     @ToString.Exclude
     private List<ItemDTO> items;
-    private BigDecimal totalSum;
 
     public BigDecimal getTotalSum() {
         return items.stream()

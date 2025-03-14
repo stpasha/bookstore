@@ -67,10 +67,7 @@ public class TestDataFactory {
                 faker.lorem().maxLengthSentence(255),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
-                items,
-                items.stream()
-                        .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP)
+                items
         );
     }
 

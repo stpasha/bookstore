@@ -1,11 +1,16 @@
 package com.bookstory.store.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
-import lombok.*;
-
 import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -26,7 +31,6 @@ public class Product {
     @EqualsAndHashCode.Include
     private Long id;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<Item> items;
 
