@@ -6,6 +6,7 @@ import com.bookstory.store.web.dto.NewProductDTO;
 import com.bookstory.store.web.dto.ProductDTO;
 import com.bookstory.store.web.mapper.NewProductMapper;
 import com.bookstory.store.web.mapper.ProductMapper;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,14 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @AllArgsConstructor

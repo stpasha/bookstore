@@ -81,13 +81,14 @@ public class ProductController {
             }
 
             productService.addProducts(lines.stream().skip(1)
-                    .filter(line -> line.length >= 5)
+                    .filter(line -> line.length >= 6)
                     .map(line -> NewProductDTO.builder()
                             .title(line[0])
                             .description(line[1])
                             .price(new BigDecimal(line[2]))
                             .imageName(line[3])
-                            .baseImage(line[4])
+                            .quantityAvailable(Long.valueOf(line[4]))
+                            .baseImage(line[5])
                             .build()).toList());
 
         } catch (IOException | CsvException e) {
