@@ -7,7 +7,7 @@ _run cmds_
 
 ./mvnw clean package
 
-docker-compose up --build
+docker compose up --build
 
 
 ## Database

@@ -37,6 +37,7 @@ public class DefaultProductService implements ProductService {
     private final ImageService imageService;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ProductDTO> getAllProducts(String title, Pageable pageable) {
         Page<Product> products;
         if (Objects.isNull(title) || title.isBlank()) {
@@ -57,7 +58,7 @@ public class DefaultProductService implements ProductService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void addProducts(List<@Valid NewProductDTO> productList) {
         List<Product> productEntities = productList.stream()
                 .map(newProductDTO -> {

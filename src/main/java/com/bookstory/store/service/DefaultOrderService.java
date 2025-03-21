@@ -26,7 +26,7 @@ public class DefaultOrderService implements OrderService {
     final private ProductRepository productRepository;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public Optional<OrderDTO> createOrder(@Valid OrderDTO order) {
         log.info("create order {}", order);
         Order orderEntity = orderMapper.toEntity(order);
@@ -56,6 +56,7 @@ public class DefaultOrderService implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OrderDTO> getAllOrders() {
         log.info("get all order");
         return orderRepository.findAll().stream().map(orderMapper::toDto).toList();

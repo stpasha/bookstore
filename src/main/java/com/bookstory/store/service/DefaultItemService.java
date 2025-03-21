@@ -25,7 +25,7 @@ public class DefaultItemService implements ItemService {
     final public ItemMapper itemMapper;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public List<ItemDTO> createItems(@Valid List<ItemDTO> itemDTOs) {
         log.info("create items");
         List<Item> items = itemDTOs.stream()
