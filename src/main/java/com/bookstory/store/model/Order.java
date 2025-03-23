@@ -1,6 +1,9 @@
 package com.bookstory.store.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 import lombok.*;
 
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +11,6 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
 @Table(name = "orders", schema = "storedata")
 @Getter
 @Setter
@@ -20,35 +22,23 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
+    @Column("order_id")
     @EqualsAndHashCode.Include
     private Long id;
 
-    @Column(name = "comment", nullable = false)
+    @Column("comment")
     @EqualsAndHashCode.Include
     @Size(max = 255, message = "Comment must be less than 255 characters")
     @NotNull(message = "Comment cannot be null")
     private String comment;
 
-    @Column(name = "created_at", updatable = false)
+    @Column("created_at")
     @EqualsAndHashCode.Include
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "updated_at")
+    @Column("updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Transient
     private List<Item> items;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

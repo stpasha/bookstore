@@ -1,19 +1,20 @@
 package com.bookstory.store.service;
 
+import com.bookstory.store.model.Product;
 import com.bookstory.store.web.dto.NewProductDTO;
 import com.bookstory.store.web.dto.ProductDTO;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 public interface ProductService {
-    Page<ProductDTO> getAllProducts(String title, Pageable pageable);
+    Mono<Page<ProductDTO>> getAllProducts(String title, Pageable pageable);
 
-    Optional<ProductDTO> getProduct(Long id);
+    Mono<ProductDTO> getProduct(Long id);
 
-    void addProducts(List<@Valid NewProductDTO> productList);
+    Mono<List<Product>> addProducts(Flux<@Valid NewProductDTO> productList);
 }

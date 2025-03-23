@@ -1,19 +1,18 @@
 package com.bookstory.store.service;
 
 import com.bookstory.store.model.Order;
-import com.bookstory.store.persistence.OrderRepository;
-import com.bookstory.store.persistence.ProductRepository;
+import com.bookstory.store.repository.OrderRepository;
+import com.bookstory.store.repository.ProductRepository;
 import com.bookstory.store.web.dto.OrderDTO;
 import com.bookstory.store.web.mapper.OrderMapper;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import jakarta.validation.Valid;
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -27,7 +26,7 @@ public class DefaultOrderService implements OrderService {
 
     @Override
     @Transactional
-    public Optional<OrderDTO> createOrder(@Valid OrderDTO order) {
+    public Mono<OrderDTO> createOrder(@Valid OrderDTO order) {
         log.info("create order {}", order);
         Order orderEntity = orderMapper.toEntity(order);
         if (orderEntity.getItems() != null) {
@@ -44,21 +43,20 @@ public class DefaultOrderService implements OrderService {
                 item.getProduct().setQuantityAvailable(Math.subtractExact(availableQuatity, quantity));
             }
         });
-        Order savedOrder = orderRepository.save(orderEntity);
-        return Optional.of(orderMapper.toDto(savedOrder));
+        return orderRepository.save(orderEntity).map(orderMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<OrderDTO> getOrder(Long id) {
+    public Mono<OrderDTO> getOrder(Long id) {
         log.info("get order by id {}", id);
         return orderRepository.findById(id).map(orderMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> getAllOrders() {
+    public Flux<OrderDTO> getAllOrders() {
         log.info("get all order");
-        return orderRepository.findAll().stream().map(orderMapper::toDto).toList();
+        return orderRepository.findAll().map(orderMapper::toDto);
     }
 }
