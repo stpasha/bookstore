@@ -13,9 +13,9 @@ import jakarta.validation.constraints.Min;
 @Builder
 public class ItemDTO {
     private Long id;
-    private OrderDTO order;
     @Min(0)
     private Long quantity;
-    @JsonIgnore
     private ProductDTO product;
+    private Long orderId;
+    private Long productId;
 }

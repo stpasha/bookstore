@@ -172,4 +172,26 @@
         </rollback>
     </changeSet>
 
+    <changeSet id="9" author="nomatter" runOnChange="true" context="schema-update">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.columns
+                    WHERE table_schema = 'storedata'
+                    AND table_name = 'orders'
+                    AND column_name = 'total';
+                </sqlCheck>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="orders" schemaName="storedata">
+            <column name="total" type="DECIMAL(10,2)"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="orders" columnName="total" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>

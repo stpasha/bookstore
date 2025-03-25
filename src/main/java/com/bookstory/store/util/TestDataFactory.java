@@ -60,16 +60,16 @@ public class TestDataFactory {
                 .build();
     }
 
-    public OrderDTO createOrderDTO() {
-        List<ItemDTO> items = createItemDTOs(3);
-        return new OrderDTO(
-                null,
-                faker.lorem().maxLengthSentence(255),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                items
-        );
-    }
+//    public OrderDTO createOrderDTO() {
+//        List<ItemDTO> items = createItemDTOs(3);
+//        return new OrderDTO(
+//                null,
+//                faker.lorem().maxLengthSentence(255),
+//                LocalDateTime.now(),
+//                LocalDateTime.now(),
+//                items
+//        );
+//    }
 
     public List<Order> createOrders(int count) {
         return IntStream.range(0, count)
@@ -79,8 +79,8 @@ public class TestDataFactory {
 
     public Item createItem(Order order, Product product) {
         return Item.builder()
-                .order(order)
-                .product(product)
+//                .order(order)
+//                .product(product)
                 .quantity(ThreadLocalRandom.current().nextLong(1, 11))
                 .build();
     }
@@ -88,9 +88,9 @@ public class TestDataFactory {
     public ItemDTO createItemDTO() {
         ProductDTO productDTO = createProductDTO();
         return ItemDTO.builder()
-                .order(null)
+//                .order(null)
                 .quantity(ThreadLocalRandom.current().nextLong(1, 11))
-                .product(productDTO)
+//                .product(productDTO)
                 .build();
     }
 
@@ -132,11 +132,11 @@ public class TestDataFactory {
                 .collect(Collectors.toList());
     }
 
-    public List<OrderDTO> createOrderDTOs(int count) {
-        return IntStream.range(0, count)
-                .mapToObj(i -> createOrderDTO())
-                .collect(Collectors.toList());
-    }
+//    public List<OrderDTO> createOrderDTOs(int count) {
+//        return IntStream.range(0, count)
+//                .mapToObj(i -> createOrderDTO())
+//                .collect(Collectors.toList());
+//    }
 
     public List<ItemDTO> createItemDTOs(int count) {
         return IntStream.range(0, count)
@@ -146,7 +146,7 @@ public class TestDataFactory {
 
     public CartDTO createCartDTO() {
         List<ItemDTO> items = createItemDTOs(3);
-        return new CartDTO(items.stream().collect(Collectors.toMap(itemDTO -> itemDTO.getProduct().getId(), item -> item)),
+        return new CartDTO(items.stream().collect(Collectors.toMap(itemDTO -> itemDTO.getProductId(), item -> item)),
                 faker.lorem().maxLengthSentence(255));
     }
 

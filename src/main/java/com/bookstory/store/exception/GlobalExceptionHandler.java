@@ -3,9 +3,9 @@ package com.bookstory.store.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.reactive.resource.NoResourceFoundException;
 import org.springframework.web.reactive.result.view.Rendering;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -15,18 +15,20 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public Mono<Rendering> handleNoResourceFoundException(NoResourceFoundException ex, WebRequest request) {
+    public Mono<Rendering> handleNoResourceFoundException(NoResourceFoundException ex, ServerWebExchange exchange) {
         log.error("Resource not found: {}", ex.getMessage(), ex);
         return Mono.just(Rendering.view("oops")
-                .modelAttribute("errorDetails", new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false)))
+                .modelAttribute("errorDetails", new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+                        exchange.getRequest().getURI().toString()))
                 .build());
     }
 
     @ExceptionHandler(Exception.class)
-    public Mono<Rendering> handleGeneralException(Exception ex, WebRequest request) {
+    public Mono<Rendering> handleGeneralException(Exception ex, ServerWebExchange exchange) {
         log.error("Error occured {}", ex.getMessage(), ex);
         return Mono.just(Rendering.view("error")
-                .modelAttribute("errorDetails", new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false)))
+                .modelAttribute("errorDetails", new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+                        exchange.getRequest().getURI().toString()))
                 .build());
     }
 

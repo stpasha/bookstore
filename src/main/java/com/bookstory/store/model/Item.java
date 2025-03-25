@@ -34,7 +34,4 @@ public class Item {
 
     @Transient
     private Product product;
-
-    @Transient
-    private Order order;
 }

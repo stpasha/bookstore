@@ -1,20 +1,17 @@
 spring:
   application:
     name: store
+  r2dbc:
+    url: r2dbc:postgresql://intershop:5432/bookstore   # URL подключения к базе данных
+    username: baseadm                              # Имя пользователя базы данных
+    password: basepass                          # Пароль пользователя
+    pool:
+      enabled: true                               # Включение пула соединений
+      initial-size: 10                            # Начальное количество соединений в пуле
+      max-size: 50                                # Максимальное количество соединений
+      max-idle-time: 30s                          # Время бездействия соединения перед закрытием
+      max-life-time: 10m                          # Максимальное время жизни соединения
+      validation-query: SELECT 1                  # SQL-запрос для проверки работоспособности соединения
   datasource:
     init: never
-    # Указываем имя контейнера в URL!
-    url: jdbc:postgresql://intershop:5432/bookstore
-    username: baseadm
-    password: basepass
-    driver-class-name: org.postgresql.Driver
     schema: storedata
-    hikari:
-      # Максимальное количество соединений в пуле
-      maximum-pool-size: 10
-      # Минимально неактивных соединений
-      minimum-idle: 2
-      # Время активности соединения если min-idle<
-      idle-timeout: 30000
-      #Макс таймаут
-      max-lifetime: 1800000

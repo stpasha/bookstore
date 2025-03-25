@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
-    Mono<OrderDTO> createOrder(@Valid OrderDTO order);
+    Mono<OrderDTO> createOrder(Mono<OrderDTO> order);
     Mono<OrderDTO> getOrder(Long id);
     Flux<OrderDTO> getAllOrders();
 }

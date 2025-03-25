@@ -3,25 +3,13 @@ spring:
     active: dev
   application:
       name: store
-  jpa:
-    show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    properties:
-      jakarta:
-        persistence:
-          validation:
-            mode: callback
-      hibernate:
-        # Форматировать SQL для удобства в логах
-        format_sql: true
-        # Выводить SQL в консоль
-        show_sql: true
-        ddl-auto: none
-        default_schema: storedata
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
     enabled: true
     default-schema: storedata
+    url: jdbc:postgresql://intershop:5432/bookstore
+    user: baseadm
+    password: basepass
 image:
   upload:
     dir: ./uploads/images

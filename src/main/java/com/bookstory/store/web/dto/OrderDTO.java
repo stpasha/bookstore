@@ -5,7 +5,6 @@ import lombok.*;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,6 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString
 public class OrderDTO {
     private Long id;
@@ -24,10 +24,6 @@ public class OrderDTO {
     private LocalDateTime updatedAt;
     @ToString.Exclude
     private List<ItemDTO> items;
+    private BigDecimal total;
 
-    public BigDecimal getTotalSum() {
-        return items.stream()
-                .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
-    }
 }

@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,21 +42,19 @@ public class DefaultProductService implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public Mono<Page<ProductDTO>> getAllProducts(String title, Pageable pageable) {
-        int limit = pageable.getPageSize();
-        long offset = pageable.getOffset();
         Mono<List<ProductDTO>> productDTOS;
         Mono<Long> count;
         if (title.isBlank()) {
             log.info("Fetching all products | Pageable: size={}, page={}", pageable.getPageSize(), pageable.getPageNumber());
             count = repository.count();
-            productDTOS = repository.findAllBy(limit, offset)
+            productDTOS = repository.findAllBy(pageable)
                     .map(productMapper::toDto)
                     .collectList()
                     .defaultIfEmpty(Collections.emptyList());
         } else {
             log.info("Fetching products with filter '{}' pageable {}", title, pageable);
             count = repository.countByTitleContainingIgnoreCase(title);
-            productDTOS = repository.findByTitleContainingIgnoreCase(title, limit, offset)
+            productDTOS = repository.findByTitleContainingIgnoreCase(title, pageable)
                     .map(productMapper::toDto)
                     .collectList();
         }
@@ -78,7 +77,7 @@ public class DefaultProductService implements ProductService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Mono<List<Product>> addProducts(Flux<@Valid NewProductDTO> productList) {
+    public Mono<List<Product>> addProducts(Flux<NewProductDTO> productList) {
         return productList
                 .flatMap(newProductDTO -> {
                     if (newProductDTO.getBaseImage() != null && !newProductDTO.getBaseImage().isBlank()) {

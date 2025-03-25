@@ -4,6 +4,7 @@
 <head>
     <title>Витрина товаров</title>
     <script src="scripts.js"></script>
+    <meta charset="UTF-8"/>
 </head>
 
 <body>
@@ -71,7 +72,6 @@
                     <td>
                         <form th:action="@{'/items/' + ${product.id} + '/add'}" method="post">
                             <input type="hidden" id="product-quantity" name="quantity" th:value="${product.quantity ?: 0}"/>
-                            <input type="hidden" name="id" th:value="${product.id}"/>
                             <div>
                                 <span>Количество доступных:</span>
                                 <span id="quantity-available" th:text="${product.quantityAvailable}"></span>
@@ -82,7 +82,7 @@
                             </div>
                             <button id="minus">-</button>
                             <button id="plus">+</button>
-                            <button name="action" value="add" style="float:right;">В корзину</button>
+                            <button name="action" style="float:right;">В корзину</button>
                         </form>
                     </td>
                 </tr>

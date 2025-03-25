@@ -8,6 +8,8 @@ import lombok.*;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,11 +36,18 @@ public class Order {
 
     @Column("created_at")
     @EqualsAndHashCode.Include
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column("updated_at")
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @Column("total")
+    private BigDecimal total;
 
     @Transient
     private List<Item> items;
+
+
 }

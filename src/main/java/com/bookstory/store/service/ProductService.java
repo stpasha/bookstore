@@ -16,5 +16,5 @@ public interface ProductService {
 
     Mono<ProductDTO> getProduct(Long id);
 
-    Mono<List<Product>> addProducts(Flux<@Valid NewProductDTO> productList);
+    Mono<List<Product>> addProducts(Flux<NewProductDTO> productList);
 }

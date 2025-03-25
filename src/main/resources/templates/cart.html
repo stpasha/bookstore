@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8"/>
     <script src="../cart.js" defer></script>
     <title>Корзина товаров</title>
 </head>
@@ -31,7 +32,8 @@
                 </tr>
                 <tr>
                     <td>
-                        <form th:action="@{/items/remove}" method="post">
+                        <form th:action="@{'/items/' + ${item.key} + '/remove'}" method="post">
+<!--                            TODO REMOVE-->
                             <input type="hidden" name="productId" th:value="${item.key}"/>
                             <span th:text="${item.value.quantity}"></span>
                             <button type="submit" name="action" value="delete" style="float:right;">&cross;</button>
