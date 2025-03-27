@@ -24,8 +24,8 @@ public class ListItemRepository {
                 price,
                 quantity_available
             FROM
-                items  INNER JOIN
-                    products
+                storedata.items  INNER JOIN
+                storedata.products
                 ON (items.product_id = products.product_id)
             WHERE order_id = :id
             """;

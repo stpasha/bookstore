@@ -2,6 +2,7 @@ package com.bookstory.store.service;
 
 import com.bookstory.store.model.Order;
 import com.bookstory.store.repository.OrderRepository;
+import com.bookstory.store.util.ObjectValidator;
 import com.bookstory.store.web.dto.ItemDTO;
 import com.bookstory.store.web.dto.OrderDTO;
 import com.bookstory.store.web.mapper.ItemMapper;
@@ -10,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.reactive.resource.NoResourceFoundException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -19,7 +20,6 @@ import java.math.BigDecimal;
 @Slf4j
 @Service
 @AllArgsConstructor
-@Validated
 public class DefaultOrderService implements OrderService {
 
     final private OrderRepository orderRepository;
@@ -27,6 +27,7 @@ public class DefaultOrderService implements OrderService {
     final private ItemMapper itemMapper;
     final private ItemService itemService;
     final private ProductService productService;
+    final private ObjectValidator objectValidator;
 
     @Override
     @Transactional
@@ -34,6 +35,10 @@ public class DefaultOrderService implements OrderService {
         log.info("create order {}", order);
 
         return order.flatMap(orderDTO -> {
+            objectValidator.validate(orderDTO);
+            if (orderDTO.getItems() == null || orderDTO.getItems().isEmpty()) {
+                return Mono.error(new IllegalArgumentException("Order must contain at least one item."));
+            }
             return Flux.fromIterable(orderDTO.getItems())
                     .flatMap(itemDTO -> productService.getProduct(itemDTO.getProductId())
                             .map(productDTO -> productDTO.getPrice().multiply(BigDecimal.valueOf(itemDTO.getQuantity())))
@@ -73,7 +78,8 @@ public class DefaultOrderService implements OrderService {
                 .flatMap(orderDTO -> itemService.getItemsByOrderId(Mono.just(orderDTO))
                         .collectList()
                         .doOnNext(orderDTO::setItems)
-                        .thenReturn(orderDTO));
+                        .thenReturn(orderDTO))
+                .switchIfEmpty(Mono.error(new NoResourceFoundException("Order with id " + id + " not found")));
     }
 
     @Override

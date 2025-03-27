@@ -1,5 +1,6 @@
 package com.bookstory.store.web.config;
 
+import com.bookstory.store.web.resolver.CustomLocaleResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +8,8 @@ import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.server.i18n.LocaleContextResolver;
+
 import java.net.URI;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.permanentRedirect;
@@ -27,5 +30,10 @@ public class WebConfig implements WebFluxConfigurer {
         return route()
                 .GET("/", request -> permanentRedirect(URI.create("/products")).build())
                 .build();
+    }
+
+    @Bean
+    public LocaleContextResolver localeContextResolver() {
+        return new CustomLocaleResolver();
     }
 }

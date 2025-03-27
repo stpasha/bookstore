@@ -1,5 +1,6 @@
 package com.bookstory.store.web;
 
+import com.bookstory.store.exception.ErrorDetails;
 import com.bookstory.store.service.OrderService;
 import com.bookstory.store.web.dto.CartDTO;
 import com.bookstory.store.web.dto.OrderDTO;
@@ -8,7 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.reactive.result.view.Rendering;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/orders")
@@ -23,52 +30,52 @@ public class OrderController {
     }
 
     @GetMapping
-    public Mono<String> listOrders(Model model) {
+    public  Mono<Rendering> listOrders() {
         return orderService.getAllOrders().collectList().map(allOrders -> {
             log.info("list orders");
-            model.addAttribute("orders", allOrders);
-            return "orders";
+            return Rendering.view("orders").modelAttribute("orders", allOrders).build();
         });
     }
 
     @GetMapping("/{id}")
-    public Mono<String> getOrder(Model model, @PathVariable("id") Long id) {
+    public Mono<Rendering> getOrder(@PathVariable("id") Long id) {
         return orderService.getOrder(id).map(orderDTO -> {
-            model.addAttribute("order", orderDTO);
             log.info("found order: {}", orderDTO);
-            return "order";
-        }).onErrorResume((e) -> {
-            log.warn("No such order id {} error {} ", id, e.getMessage());
-            return Mono.empty();
+            return Rendering.view("order")
+                    .modelAttribute("order", orderDTO).build();
         });
     }
 
     @PostMapping
-    public Mono<String> createOrder(@SessionAttribute("cart") CartDTO cartDTO,
-                                    @RequestParam(value = "comment", defaultValue = "")
-                                    String comment,
-                              Model model,  SessionStatus sessionStatus) {
+    public Mono<Rendering> createOrder(@SessionAttribute("cart") CartDTO cartDTO,
+                                       ServerWebExchange exchange,
+                                       SessionStatus sessionStatus) {
         if (cartDTO.getItems().isEmpty()) {
-            return Mono.just("redirect:/products");
+            return Mono.just(Rendering.redirectTo("/products").build());
         }
 
-        return Mono.fromSupplier(() -> OrderDTO.builder()
-                        .comment(comment)
-                        .items(cartDTO.getItems().values().stream().toList())
-                        .build())
-                .flatMap(orderDTO -> orderService.createOrder(Mono.just(orderDTO)))
-                .doOnNext(createdOrder -> {
-                    log.info("Created order: {}", createdOrder);
-                    model.addAttribute("order", createdOrder);
-                    model.addAttribute("newOrder", true);
-                    sessionStatus.setComplete();
+        return exchange.getFormData()
+                .map(formData -> Optional.ofNullable(formData.getFirst("comment")).orElse(""))
+                .flatMap(comment -> {
+                    OrderDTO orderDTO = OrderDTO.builder()
+                            .comment(comment)
+                            .items(cartDTO.getItems().values().stream().toList())
+                            .build();
+
+                    return orderService.createOrder(Mono.just(orderDTO))  // убираем Mono.just()
+                            .flatMap(createdOrder -> {
+                                sessionStatus.setComplete(); // переносим очистку сюда
+                                return Mono.just(Rendering.view("order")
+                                        .modelAttribute("order", createdOrder)
+                                        .modelAttribute("newOrder", true)
+                                        .build());
+                            });
                 })
-                .thenReturn("order")
                 .onErrorResume(e -> {
-                    model.addAttribute("error", "Order is not created");
                     log.error("Order is not created: {}", e.getMessage());
-                    sessionStatus.setComplete();
-                    return Mono.just("error");
+                    return Mono.just(Rendering.view("error")
+                            .modelAttribute("error", "Order is not created")
+                            .build());
                 });
     }
 }

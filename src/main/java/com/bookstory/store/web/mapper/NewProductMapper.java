@@ -10,7 +10,6 @@ public interface NewProductMapper {
 
     @Mapping(source = "imageName", target = "imageUrl")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "items", ignore = true)
     Product toEntity(NewProductDTO dto);
 
     @Mapping(source = "imageUrl", target = "imageName")

@@ -2,33 +2,29 @@ package com.bookstory.store.service;
 
 import com.bookstory.store.model.Product;
 import com.bookstory.store.repository.ProductRepository;
+import com.bookstory.store.util.ObjectValidator;
 import com.bookstory.store.web.dto.NewProductDTO;
 import com.bookstory.store.web.dto.ProductDTO;
 import com.bookstory.store.web.mapper.NewProductMapper;
 import com.bookstory.store.web.mapper.ProductMapper;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
 @Slf4j
-@Validated
 public class DefaultProductService implements ProductService {
 
     private final ProductRepository repository;
@@ -38,6 +34,8 @@ public class DefaultProductService implements ProductService {
     private final NewProductMapper newProductMapper;
 
     private final FileService fileService;
+
+    final private ObjectValidator objectValidator;
 
     @Override
     @Transactional(readOnly = true)
@@ -68,17 +66,13 @@ public class DefaultProductService implements ProductService {
 
         return repository.findById(id)
                 .map(productMapper::toDto)
-                .doOnSuccess(product -> log.info("Found product: {}", product))
-                .onErrorResume(e -> {
-                    log.warn("Error in querying id {} {}", id, e.getMessage());
-                    return Mono.empty();
-                });
+                .doOnSuccess(product -> log.info("Found product: {}", product));
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Mono<List<Product>> addProducts(Flux<NewProductDTO> productList) {
-        return productList
+        return objectValidator.validate(productList)
                 .flatMap(newProductDTO -> {
                     if (newProductDTO.getBaseImage() != null && !newProductDTO.getBaseImage().isBlank()) {
                         return fileService.saveImage(Mono.zip(

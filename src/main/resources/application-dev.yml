@@ -1,4 +1,7 @@
 spring:
+  webflux:
+    locale: ru_RU
+    charset: UTF-8
   application:
     name: store
   r2dbc:

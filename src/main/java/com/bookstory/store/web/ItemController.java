@@ -3,22 +3,12 @@ package com.bookstory.store.web;
 import com.bookstory.store.service.ProductService;
 import com.bookstory.store.web.dto.CartDTO;
 import com.bookstory.store.web.dto.ItemDTO;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,12 +16,12 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/items")
 @Slf4j
 @SessionAttributes("cart")
-@Validated
 @AllArgsConstructor
 public class ItemController {
 
@@ -48,7 +38,7 @@ public class ItemController {
                                       @ModelAttribute("cart") Mono<CartDTO> cartMono) {
         return exchange.getFormData().flatMap(formData -> {
             List<String> quantityStrings = formData.get("quantity");
-            if (!quantityStrings.isEmpty()) {
+            if (!quantityStrings.isEmpty() && !Objects.equals("0", quantityStrings.getFirst())) {
                 Long quantity = Long.parseLong(quantityStrings.getFirst());
                 return productService.getProduct(id)
                         .flatMap(productDTO -> cartMono.flatMap(cart -> {

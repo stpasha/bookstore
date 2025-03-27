@@ -45,7 +45,7 @@ public class DefaultFileService implements FileService {
                     return new String(bytes, StandardCharsets.UTF_8);
                 })
                 .flatMapMany(content -> {
-                    try (CSVParser parser = CSVParser.parse(content, CSVFormat.Builder.create().setDelimiter(';').setHeader().setSkipHeaderRecord(true).get())) {
+                    try (CSVParser parser = CSVParser.parse(content, CSVFormat.Builder.create().setDelimiter(',').setHeader().setSkipHeaderRecord(true).get())) {
                         return Flux.fromIterable(parser.getRecords()).flatMap(record -> {
                             try {
                                 return Mono.just(NewProductDTO.builder()
@@ -53,7 +53,7 @@ public class DefaultFileService implements FileService {
                                         .description(record.get("description").trim())
                                         .price(new BigDecimal(record.get("price").trim()))
                                         .imageName(record.get("imageName").trim())
-                                        .quantityAvailable(Long.parseLong(record.get("quantityAvailable").trim()))
+                                        .quantityAvailable(Long.parseLong(record.get("quantity").trim()))
                                         .baseImage(record.get("baseImage").trim())
                                         .build());
                             } catch (Exception e) {

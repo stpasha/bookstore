@@ -1,13 +1,18 @@
 package com.bookstory.store.web.dto;
 
-import lombok.*;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,7 +23,6 @@ import java.util.List;
 @EqualsAndHashCode
 public class ProductDTO {
     private Long id;
-    private List<ItemDTO> items;
     @Size(max = 255, message = "Should be not greater than 255 symbols")
     @NotEmpty
     @NotNull

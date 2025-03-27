@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Min;
 @Builder
 public class ItemDTO {
     private Long id;
-    @Min(0)
+    @Min(1)
     private Long quantity;
     private ProductDTO product;
     private Long orderId;
