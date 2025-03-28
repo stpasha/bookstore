@@ -2,7 +2,6 @@ package com.bookstory.store.repository;
 
 import com.bookstory.store.model.Product;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;

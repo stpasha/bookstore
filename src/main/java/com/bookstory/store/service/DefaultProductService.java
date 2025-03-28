@@ -65,6 +65,7 @@ public class DefaultProductService implements ProductService {
         log.info("Fetching product with id {}", id);
 
         return repository.findById(id)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Product must not be empty")))
                 .map(productMapper::toDto)
                 .doOnSuccess(product -> log.info("Found product: {}", product));
     }

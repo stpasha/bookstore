@@ -1,16 +1,37 @@
 package com.bookstory.store.tests.persistence;
 
 import com.bookstory.store.annotations.StoreTestAnnotation;
+import com.bookstory.store.model.Item;
+import com.bookstory.store.model.Order;
+import com.bookstory.store.model.Product;
 import com.bookstory.store.repository.ItemRepository;
 import com.bookstory.store.repository.OrderRepository;
 import com.bookstory.store.repository.ProductRepository;
+import com.bookstory.store.tests.AbstractTest;
 import com.bookstory.store.util.TestDataFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
+
+import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
+import java.util.AbstractMap;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @StoreTestAnnotation
-public class RepositoryTest {
+@Slf4j
+public class RepositoryTest extends AbstractTest {
+
+
     @Nested
     class ItemRepositoryTest {
 
@@ -28,200 +49,194 @@ public class RepositoryTest {
 
         @BeforeEach
         public void setUp() {
-            orderRepository.deleteAll();
-            itemRepository.deleteAll();
+            Mono<Void> cleanUp = orderRepository.deleteAll().then(itemRepository.deleteAll());
+            StepVerifier.create(cleanUp)
+                    .verifyComplete();
         }
 
-//        @Test
-//        @Transactional
-//        public void createItem() {
-//            Order order = orderRepository.save(testDataFactory.createOrder());
-//            Product product = productRepository.save(testDataFactory.createProduct());
-//
-//            Item item = testDataFactory.createItem(order, product);
-//            itemRepository.save(item);
-//
-//            assertNotNull(item.getId(), "Item ID should be generated");
-//            assertEquals(order.getId(), item.getOrder().getId(), "Item should be linked to the correct order");
-//            assertEquals(product.getId(), item.getProduct().getId(), "Item should be linked to the correct product");
-//            assertTrue(item.getQuantity() > 0, "Quantity greater than 0");
-//        }
-//
-//        @Test
-//        @Transactional
-//        public void getItem() {
-//            Order order = orderRepository.save(testDataFactory.createOrder());
-//            Product product = productRepository.save(testDataFactory.createProduct());
-//
-//            Item item = itemRepository.save(testDataFactory.createItem(order, product));
-//
-//            Optional<Item> foundItem = itemRepository.findById(item.getId());
-//            assertTrue(foundItem.isPresent(), "Item should be found");
-//            assertEquals(item.getId(), foundItem.get().getId(), "IDs should match");
-//            assertEquals(order.getId(), foundItem.get().getOrder().getId(), "Order IDs should match");
-//            assertEquals(product.getId(), foundItem.get().getProduct().getId(), "Product IDs should match");
-//        }
-//
-//
-//        @Test
-//        @Transactional
-//        public void findAllItems() {
-//            Order order = orderRepository.save(testDataFactory.createOrder());
-//            Product product = productRepository.save(testDataFactory.createProduct());
-//
-//            List<Item> items = testDataFactory.createItems(5, List.of(order), List.of(product));
-//            itemRepository.saveAll(items);
-//
-//            List<Item> retrievedItems = itemRepository.findAll();
-//            assertEquals(5, retrievedItems.size(), "Should get 5 items");
-//        }
-//
-//    }
-//
-//    @Nested
-//    class OrderRepositoryTest {
-//        @Autowired
-//        private OrderRepository orderRepository;
-//
-//        @Autowired
-//        TestDataFactory testDataFactory;
-//
-//        @BeforeEach
-//        public void setUp() {
-//            orderRepository.deleteAll();
-//        }
-//
-//        @Test
-//        @Transactional
-//        public void createOrder() {
-//            Order order = testDataFactory.createOrder();
-//            orderRepository.save(order);
-//            Assertions.assertNotNull(order.getId());
-//            assertAll("Check order saved",
-//                    () -> Assertions.assertNotNull(order.getCreatedAt()),
-//                    () -> Assertions.assertNotNull(order.getUpdatedAt()),
-//                    () -> Assertions.assertNotNull(order.getComment()),
-//                    () -> Assertions.assertNotNull(order.getItems())
-//            );
-//        }
-//
-//        @Test
-//        @Transactional
-//        public void getAllOrders_Empty() {
-//            List<Order> orders = orderRepository.findAll();
-//            Assertions.assertTrue(orders.isEmpty());
-//        }
-//
-//        @Test
-//        @Transactional
-//        public void getAllOrders() {
-//            int orderCount = 10;
-//            List<Order> orders = testDataFactory.createOrders(orderCount);
-//            orderRepository.saveAll(orders);
-//            Assert.assertEquals(orderCount, orderRepository.findAll().size());
-//        }
-//
-//        @Test
-//        @Transactional
-//        public void getOrder() {
-//            Order order = testDataFactory.createOrder();
-//            Order dbOrder = orderRepository.save(order);
-//            Optional<Order> foundOrder = orderRepository.findById(dbOrder.getId());
-//            assertAll("Check order saved",
-//                    () -> Assertions.assertTrue(foundOrder
-//                            .map(found -> dbOrder.getCreatedAt().equals(found.getCreatedAt())).orElse(false)),
-//                    () -> Assertions.assertTrue(foundOrder
-//                            .map(found -> dbOrder.getUpdatedAt().equals(found.getUpdatedAt())).orElse(false)),
-//                    () -> Assertions.assertTrue(foundOrder
-//                            .map(found -> dbOrder.getId().equals(found.getId())).orElse(false)),
-//                    () -> Assertions.assertTrue(foundOrder
-//                            .map(found -> dbOrder.getComment().equals(found.getComment())).orElse(false))
-//            );
-//        }
-//
-//        @Test
-//        @Transactional
-//        public void updateOrder() {
-//            Order order = testDataFactory.createOrder();
-//            orderRepository.save(order);
-//
-//            order.setComment("Updated comment");
-//            orderRepository.save(order);
-//
-//            Optional<Order> updatedOrder = orderRepository.findById(order.getId());
-//            Assertions.assertTrue(updatedOrder.isPresent());
-//            Assertions.assertEquals("Updated comment", updatedOrder.get().getComment());
-//        }
-//
-//
-//    }
-//
-//    @Nested
-//    class ProductRepositoryTest {
-//
-//        @Autowired
-//        private ProductRepository productRepository;
-//
-//        @Autowired
-//        private TestDataFactory testDataFactory;
-//
-//        @Test
-//        @Transactional
-//        public void createProduct() {
-//            Product product = testDataFactory.createProduct();
-//            productRepository.save(product);
-//
-//            assertNotNull(product.getId());
-//            assertFalse(product.getTitle().isBlank());
-//            assertTrue(product.getPrice().compareTo(BigDecimal.ZERO) >= 0, "Price should be >= 0");
-//        }
-//
-//        @Test
-//        @Transactional
-//        public void getProduct() {
-//            Product product = productRepository.save(testDataFactory.createProduct());
-//
-//            Optional<Product> foundProduct = productRepository.findById(product.getId());
-//            assertTrue(foundProduct.isPresent(), "Product should be found");
-//            assertEquals(product.getId(), foundProduct.get().getId(), "ID should match");
-//        }
-//
-//        @Test
-//        @Transactional
-//        public void findByTitleContainingIgnoreCase() {
-//            productRepository.save(Product.builder()
-//                    .title("gRPC: Up and Running. Building Cloud Native Applications with Go and Java for Docker and Kubernetes")
-//                    .description("""
-//                                With this practical guide, you’ll learn how this high-performance interprocess
-//                                communication protocol is capable of connecting polyglot services in microservices
-//                                architecture
-//                                """)
-//                    .price(BigDecimal.valueOf(2345.99))
-//                    .quantityAvailable(10L)
-//                    .build());
-//
-//            productRepository.save(Product.builder()
-//                    .title("Practical gRPC")
-//                    .description("Build highly-connected systems with a framework that can run on any platform")
-//                    .price(BigDecimal.valueOf(2339.99))
-//                    .quantityAvailable(5L)
-//                    .build());
-//
-//            Page<Product> result = productRepository.findByTitleContainingIgnoreCase("gRPC", PageRequest.of(0, 10));
-//            assertEquals(2, result.getTotalElements(), "Should find 2 products containing 'gRPC' in the title");
-//        }
-//
-//        @Test
-//        @Transactional
-//        public void testPagination() {
-//            List<Product> products = testDataFactory.createProducts(15);
-//            productRepository.saveAll(products);
-//
-//            Page<Product> page = productRepository.findAll(PageRequest.of(0, 5));
-//
-//            assertEquals(5, page.getSize(), "Page should contain 5 products");
-//            assertEquals(39, page.getTotalElements(), "Total elements should be 39");
-//            assertEquals(8, page.getTotalPages(), "Total pages should be 8");
-//        }
+        @Test
+        public void createItem() {
+            Order order = testDataFactory.createOrder();
+            Mono<Item> itemMono = orderRepository.save(order)
+                    .flatMap(dbOrder ->
+                            productRepository.findById(1L)
+                                    .flatMap(product -> itemRepository.save(testDataFactory.createItem(dbOrder, product)))
+                    );
+
+            StepVerifier.create(itemMono)
+                    .assertNext(item -> {
+                        assertNotNull(item.getId(), "Item ID should be generated");
+                        assertNotNull(item.getOrderId(), "Item should have an order ID");
+                        assertTrue(item.getQuantity() > 0, "Quantity should be greater than 0");
+                    })
+                    .verifyComplete();
+            ;
+        }
+
+
+        @Test
+        public void getItem() {
+            Order order = testDataFactory.createOrder();
+            Mono<Order> orderMono = orderRepository.save(order);
+            Mono<Product> productMono = productRepository.findById(1L);
+
+            Mono<Item> itemMono = Mono.zip(orderMono, productMono)
+                    .flatMap(tuple -> itemRepository.save(testDataFactory.createItem(tuple.getT1(), tuple.getT2())));
+
+            StepVerifier.create(itemMono.flatMap(item -> itemRepository.findById(item.getId())))
+                    .assertNext(foundItem -> {
+                        assertNotNull(foundItem, "Item should be found");
+                        assertNotNull(foundItem.getId(), "Item ID should not be null");
+                        assertNotNull(foundItem.getOrderId(), "Order should not be null");
+                        assertNotNull(foundItem.getProductId(), "Product should not be null");
+                    })
+                    .verifyComplete();
+        }
+
+
+        @Test
+        public void findAllItems() {
+            Mono<Order> orderMono = orderRepository.save(testDataFactory.createOrder());
+
+            Flux<Long> ids = Flux.just(1L, 2L, 3L, 4L, 5L);
+
+            Flux<Product> productFlux = ids.flatMap(productRepository::findById);
+
+            Flux<Item> itemFlux = orderMono.flatMapMany(order ->
+                    productFlux.flatMap(product ->
+                            itemRepository.save(testDataFactory.createItem(order, product))
+                    )
+            );
+
+            StepVerifier.create(itemFlux.thenMany(itemRepository.findAll().collectList()))
+                    .assertNext(foundItems -> assertEquals(5, foundItems.size(), "Should get 5 items"))
+                    .verifyComplete();
+        }
+    }
+
+
+    @Nested
+    class OrderRepositoryTest {
+        @Autowired
+        private OrderRepository orderRepository;
+
+        @Autowired
+        TestDataFactory testDataFactory;
+
+        @BeforeEach
+        public void setUp() {
+            StepVerifier.create(orderRepository.deleteAll())
+                    .verifyComplete();
+        }
+
+        @Test
+        public void createOrder() {
+            Order order = testDataFactory.createOrder();
+            Mono<Order> orderMono = orderRepository.save(order);
+            StepVerifier.create(orderMono).assertNext(orderRes -> {
+                assertAll("Check order saved",
+                        () -> assertNotNull(orderRes.getCreatedAt()),
+                        () -> assertNotNull(orderRes.getUpdatedAt()),
+                        () -> assertNotNull(orderRes.getComment()),
+                        () -> assertNotNull(orderRes.getItems())
+                );
+            }).verifyComplete();
+            StepVerifier.create(orderRepository.deleteAll()).verifyComplete();
+        }
+
+
+        @Test
+        public void getAllOrders_Empty() {
+            StepVerifier.create(orderRepository.findAll())
+                    .expectNextCount(0)
+                    .verifyComplete();
+        }
+
+        @Test
+        public void getAllOrders() {
+            int orderCount = 10;
+            List<Order> orders = testDataFactory.createOrders(orderCount);
+            StepVerifier.create(orderRepository.saveAll(Flux.fromIterable(orders))).expectNextCount(orders.size()).verifyComplete();
+        }
+
+        @Test
+        public void getOrder() {
+            Order order = testDataFactory.createOrder();
+
+            Mono<AbstractMap.SimpleEntry<Order, Order>> orderMono = orderRepository.save(order)
+                    .flatMap(savedOrder -> orderRepository.findById(savedOrder.getId())
+                            .map(foundOrder -> new AbstractMap.SimpleEntry<>(savedOrder, foundOrder)));
+
+            StepVerifier.create(orderMono)
+                    .assertNext(entry -> {
+                        Order dbOrder = entry.getKey();
+                        Order foundOrder = entry.getValue();
+
+                        assertAll("Check order saved",
+                                () -> assertEquals(dbOrder.getCreatedAt().truncatedTo(ChronoUnit.MILLIS), foundOrder.getCreatedAt().truncatedTo(ChronoUnit.MILLIS), "CreatedAt should match"),
+                                () -> assertEquals(dbOrder.getUpdatedAt().truncatedTo(ChronoUnit.MILLIS), foundOrder.getUpdatedAt().truncatedTo(ChronoUnit.MILLIS), "UpdatedAt should match"),
+                                () -> assertEquals(dbOrder.getId(), foundOrder.getId(), "ID should match"),
+                                () -> assertEquals(dbOrder.getComment(), foundOrder.getComment(), "Comment should match")
+                        );
+                    })
+                    .verifyComplete();
+        }
+
+    }
+
+
+    @Nested
+    class ProductRepositoryTest {
+
+        @Autowired
+        private ProductRepository productRepository;
+
+        @Autowired
+        private TestDataFactory testDataFactory;
+
+        @Test
+        public void createProduct() {
+            Product product = testDataFactory.createProduct();
+            StepVerifier.create(productRepository.save(product)).assertNext(savedProd -> {
+                assertNotNull(savedProd.getId());
+                assertFalse(savedProd.getTitle().isBlank());
+                assertTrue(savedProd.getPrice().compareTo(BigDecimal.ZERO) >= 0, "Price should be >= 0");
+            }).verifyComplete();
+
+        }
+
+        @Test
+        public void getProduct() {
+            Mono<Product> foundProduct = productRepository.findById(1L);
+            StepVerifier.create(foundProduct).assertNext(savedProd -> {
+                assertNotNull(savedProd, "Product should be found");
+                assertEquals(1L, savedProd.getId(), "ID should match");
+            }).verifyComplete();
+        }
+
+        @Test
+        public void findByTitleContainingIgnoreCase() {
+            Flux<Product> result = productRepository.findByTitleContainingIgnoreCase("Java", PageRequest.of(0, 10));
+            StepVerifier.create(result).expectNextCount(2).verifyComplete();
+        }
+
+        @Test
+        public void testPagination() {
+            Pageable pageable = PageRequest.of(0, 5);
+
+            Mono<Long> totalCountMono = productRepository.count();
+            Flux<Product> productFlux = productRepository.findAllBy(pageable);
+
+            StepVerifier.create(Mono.zip(productFlux.collectList(), totalCountMono))
+                    .assertNext(tuple -> {
+                        List<Product> products = tuple.getT1();
+                        long totalCount = tuple.getT2();
+                        int totalPages = (int) Math.ceil((double) totalCount / pageable.getPageSize());
+
+                        assertEquals(5, products.size(), "Page should contain 5 products");
+                        assertTrue(totalPages > 0, "Total pages should be greater than 0");
+                    })
+                    .verifyComplete();
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.bookstory.store.web.mapper;
 import com.bookstory.store.model.Item;
 import com.bookstory.store.web.dto.ItemDTO;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 

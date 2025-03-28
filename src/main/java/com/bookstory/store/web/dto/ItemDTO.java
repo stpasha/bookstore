@@ -1,6 +1,5 @@
 package com.bookstory.store.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import jakarta.validation.constraints.Min;

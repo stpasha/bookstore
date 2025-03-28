@@ -3,13 +3,6 @@ spring:
     active: dev
   application:
       name: store
-  liquibase:
-    change-log: classpath:/db/changelog/db.changelog-master.xml
-    enabled: true
-    default-schema: storedata
-    url: jdbc:postgresql://intershop:5432/bookstore
-    user: baseadm
-    password: basepass
 image:
   upload:
     dir: ./uploads/images

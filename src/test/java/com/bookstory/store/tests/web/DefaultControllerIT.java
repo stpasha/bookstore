@@ -5,11 +5,11 @@ import com.bookstory.store.service.OrderService;
 import com.bookstory.store.service.ProductService;
 import com.bookstory.store.util.TestDataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 @StoreTestAnnotation
-@AutoConfigureMockMvc
+@WebFluxTest
 class DefaultControllerIT {
 
     @Autowired

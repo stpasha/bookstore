@@ -1,15 +1,3 @@
 spring:
   application:
     name: store
-  datasource:
-    init: never
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      # Максимальное количество соединений в пуле
-      maximum-pool-size: 10
-      # Минимально неактивных соединений
-      minimum-idle: 2
-      # Время активности соединения если min-idle<
-      idle-timeout: 30000
-      #Макс таймаут
-      max-lifetime: 1800000

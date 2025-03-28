@@ -41,6 +41,7 @@ public class DefaultOrderService implements OrderService {
             }
             return Flux.fromIterable(orderDTO.getItems())
                     .flatMap(itemDTO -> productService.getProduct(itemDTO.getProductId())
+                            .switchIfEmpty(Mono.error(new IllegalArgumentException("Product not found: " + itemDTO.getProductId())))
                             .map(productDTO -> productDTO.getPrice().multiply(BigDecimal.valueOf(itemDTO.getQuantity())))
                     )
                     .reduce(BigDecimal.ZERO, BigDecimal::add)

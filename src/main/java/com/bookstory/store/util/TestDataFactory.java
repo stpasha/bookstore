@@ -40,6 +40,18 @@ public class TestDataFactory {
                 .build();
     }
 
+    public ProductDTO getProductDTO() {
+        Product product = products.get(new Random().nextInt(products.size()));
+        return ProductDTO.builder()
+                .id(product.getId())
+                .quantityAvailable(product.getQuantityAvailable())
+                .imageUrl(product.getImageUrl())
+                .title(product.getTitle())
+                .description(product.getDescription())
+                .price(product.getPrice())
+                .build();
+    }
+
     public NewProductDTO createNewProductDTO() {
         return NewProductDTO.builder()
                 .title(faker.book().title())
@@ -60,16 +72,10 @@ public class TestDataFactory {
                 .build();
     }
 
-//    public OrderDTO createOrderDTO() {
-//        List<ItemDTO> items = createItemDTOs(3);
-//        return new OrderDTO(
-//                null,
-//                faker.lorem().maxLengthSentence(255),
-//                LocalDateTime.now(),
-//                LocalDateTime.now(),
-//                items
-//        );
-//    }
+    public OrderDTO createOrderDTO() {
+        List<ItemDTO> items = createItemDTOs(3);
+        return OrderDTO.builder().comment(faker.lorem().maxLengthSentence(255)).items(items).build();
+    }
 
     public List<Order> createOrders(int count) {
         return IntStream.range(0, count)
@@ -79,18 +85,18 @@ public class TestDataFactory {
 
     public Item createItem(Order order, Product product) {
         return Item.builder()
-//                .order(order)
-//                .product(product)
-                .quantity(ThreadLocalRandom.current().nextLong(1, 11))
+                .orderId(order.getId())
+                .productId(product.getId())
+                .quantity(ThreadLocalRandom.current().nextLong(1, 5))
                 .build();
     }
 
     public ItemDTO createItemDTO() {
-        ProductDTO productDTO = createProductDTO();
+        ProductDTO productDTO = getProductDTO();
         return ItemDTO.builder()
-//                .order(null)
-                .quantity(ThreadLocalRandom.current().nextLong(1, 11))
-//                .product(productDTO)
+                .quantity(ThreadLocalRandom.current().nextLong(1, 5))
+                .productId(productDTO.getId())
+                .product(productDTO)
                 .build();
     }
 
@@ -132,11 +138,11 @@ public class TestDataFactory {
                 .collect(Collectors.toList());
     }
 
-//    public List<OrderDTO> createOrderDTOs(int count) {
-//        return IntStream.range(0, count)
-//                .mapToObj(i -> createOrderDTO())
-//                .collect(Collectors.toList());
-//    }
+    public List<OrderDTO> createOrderDTOs(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(i -> createOrderDTO())
+                .collect(Collectors.toList());
+    }
 
     public List<ItemDTO> createItemDTOs(int count) {
         return IntStream.range(0, count)

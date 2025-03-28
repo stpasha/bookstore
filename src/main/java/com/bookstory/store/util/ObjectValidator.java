@@ -28,16 +28,6 @@ public class ObjectValidator {
         handleViolations(violations);
     }
 
-    public <T> void validate(List<T> objects) {
-        if (objects == null || objects.isEmpty()) {
-            throw new IllegalArgumentException("Validation error: list must not be null or empty");
-        }
-
-        for (T object : objects) {
-            validate(object);
-        }
-    }
-
     private <T> void handleViolations(Set<ConstraintViolation<T>> violations) {
         if (!violations.isEmpty()) {
             String errorMessages = violations.stream()
