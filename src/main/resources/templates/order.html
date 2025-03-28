@@ -28,7 +28,7 @@
     </tr>
     <tr th:each="item : ${order.getItems()}">
         <td>
-            <table>
+            <table id="order-details">
                 <tr>
                     <td>
                         <a th:href="${'/products/'+item.getProduct().getId()}">

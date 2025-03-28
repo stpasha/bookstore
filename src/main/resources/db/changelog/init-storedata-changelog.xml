@@ -172,7 +172,8 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="9" author="nomatter" runOnChange="true" context="schema-update">
+<!--    context="schema-update"-->
+    <changeSet id="9" author="nomatter" runOnChange="true" >
 
         <preConditions onFail="MARK_RAN">
             <not>
