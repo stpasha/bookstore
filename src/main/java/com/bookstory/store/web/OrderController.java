@@ -57,9 +57,9 @@ public class OrderController {
                             .items(cartDTO.getItems().values().stream().toList())
                             .build();
 
-                    return orderService.createOrder(Mono.just(orderDTO))  // убираем Mono.just()
+                    return orderService.createOrder(Mono.just(orderDTO))
                             .flatMap(createdOrder -> {
-                                sessionStatus.setComplete(); // переносим очистку сюда
+                                sessionStatus.setComplete();
                                 return Mono.just(Rendering.view("order")
                                         .modelAttribute("order", createdOrder)
                                         .modelAttribute("newOrder", true)

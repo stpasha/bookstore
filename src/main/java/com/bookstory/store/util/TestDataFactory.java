@@ -40,8 +40,8 @@ public class TestDataFactory {
                 .build();
     }
 
-    public ProductDTO getProductDTO() {
-        Product product = products.get(new Random().nextInt(products.size()));
+    public ProductDTO getProductDTO(int i) {
+        Product product = products.get((int) i);
         return ProductDTO.builder()
                 .id(product.getId())
                 .quantityAvailable(product.getQuantityAvailable())
@@ -91,8 +91,8 @@ public class TestDataFactory {
                 .build();
     }
 
-    public ItemDTO createItemDTO() {
-        ProductDTO productDTO = getProductDTO();
+    public ItemDTO createItemDTO(int i) {
+        ProductDTO productDTO = getProductDTO(i);
         return ItemDTO.builder()
                 .quantity(ThreadLocalRandom.current().nextLong(1, 5))
                 .productId(productDTO.getId())
@@ -146,7 +146,7 @@ public class TestDataFactory {
 
     public List<ItemDTO> createItemDTOs(int count) {
         return IntStream.range(0, count)
-                .mapToObj(i -> createItemDTO())
+                .mapToObj(this::createItemDTO)
                 .collect(Collectors.toList());
     }
 
