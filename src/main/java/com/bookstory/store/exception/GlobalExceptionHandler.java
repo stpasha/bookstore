@@ -1,6 +1,7 @@
 package com.bookstory.store.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.reactive.resource.NoResourceFoundException;
@@ -20,6 +21,7 @@ public class GlobalExceptionHandler {
         return Mono.just(Rendering.view("oops")
                 .modelAttribute("errorDetails", new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
                         exchange.getRequest().getURI().toString()))
+                .status(HttpStatus.NOT_FOUND)
                 .build());
     }
 
@@ -29,6 +31,7 @@ public class GlobalExceptionHandler {
         return Mono.just(Rendering.view("error")
                 .modelAttribute("errorDetails", new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
                         exchange.getRequest().getURI().toString()))
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .build());
     }
 

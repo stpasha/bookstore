@@ -152,8 +152,8 @@ class DefaultControllerIT extends AbstractTest {
         public void shouldReturnOrderDetails() {
 
             OrderDTO orderDTO = testDataFactory.createOrderDTO();
-            OrderDTO order = orderService.createOrder(Mono.just(orderDTO)).block();
-            assertNotNull(order);
+            OrderDTO order = orderService.createOrder(Mono.just(orderDTO)).blockOptional()
+                    .orElseThrow(() -> new AssertionError("Ошибка создания заказа"));
 
             webTestClient.get().uri("/orders/{id}", order.getId())
                     .accept(MediaType.TEXT_HTML)
@@ -173,7 +173,7 @@ class DefaultControllerIT extends AbstractTest {
             webTestClient.get().uri("/orders/{id}", 9999L)
                     .accept(MediaType.TEXT_HTML)
                     .exchange()
-                    .expectStatus().isOk()
+                    .expectStatus().isNotFound()
                     .expectBody(String.class)
                     .consumeWith(response -> {
                         String body = response.getResponseBody();
