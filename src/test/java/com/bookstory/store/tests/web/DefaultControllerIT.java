@@ -5,8 +5,6 @@ import com.bookstory.store.service.OrderService;
 import com.bookstory.store.service.ProductService;
 import com.bookstory.store.tests.AbstractTest;
 import com.bookstory.store.util.TestDataFactory;
-import com.bookstory.store.web.dto.CartDTO;
-import com.bookstory.store.web.dto.ItemDTO;
 import com.bookstory.store.web.dto.OrderDTO;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,9 +16,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -46,7 +41,7 @@ class DefaultControllerIT extends AbstractTest {
     @Nested
     class ProductControllerIT {
         @Test
-        void listProducts() {
+        public void listProducts() {
             webTestClient.get().uri("/products")
                     .accept(MediaType.TEXT_HTML)
                     .exchange()
@@ -62,7 +57,7 @@ class DefaultControllerIT extends AbstractTest {
         }
 
         @Test
-        void getProduct() {
+        public void getProduct() {
 
             webTestClient.get().uri("/products/{id}", 1L)
                     .accept(MediaType.TEXT_HTML)
@@ -80,7 +75,7 @@ class DefaultControllerIT extends AbstractTest {
     @Nested
     class ItemControllerIT {
         @Test
-        void shouldAddItemToCart() {
+        public void shouldAddItemToCart() {
             webTestClient.post()
                     .uri("/items/" + ITEM_ID + "/add")
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -92,7 +87,7 @@ class DefaultControllerIT extends AbstractTest {
         }
 
         @Test
-        void shouldRemoveItemFromCart() {
+        public void shouldRemoveItemFromCart() {
             FluxExchangeResult<Void> addItemResult = webTestClient.post()
                     .uri("/items/" + ITEM_ID + "/add")
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -123,7 +118,7 @@ class DefaultControllerIT extends AbstractTest {
 
 
         @Test
-        void shouldViewCart() {
+        public void shouldViewCart() {
             webTestClient.get().uri("/items")
                     .accept(MediaType.TEXT_HTML)
                     .exchange()
@@ -140,7 +135,7 @@ class DefaultControllerIT extends AbstractTest {
     @Nested
     class OrderControllerIT {
         @Test
-        void shouldReturnOrdersList() {
+        public void shouldReturnOrdersList() {
             webTestClient.get().uri("/orders")
                     .accept(MediaType.TEXT_HTML)
                     .exchange()
@@ -154,7 +149,7 @@ class DefaultControllerIT extends AbstractTest {
         }
 
         @Test
-        void shouldReturnOrderDetails() {
+        public void shouldReturnOrderDetails() {
 
             OrderDTO orderDTO = testDataFactory.createOrderDTO();
             OrderDTO order = orderService.createOrder(Mono.just(orderDTO)).block();
@@ -174,7 +169,7 @@ class DefaultControllerIT extends AbstractTest {
         }
 
         @Test
-        void shouldReturnErrorWhenOrderNotFound() {
+        public void shouldReturnErrorWhenOrderNotFound() {
             webTestClient.get().uri("/orders/{id}", 9999L)
                     .accept(MediaType.TEXT_HTML)
                     .exchange()
