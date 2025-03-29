@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.web.filter.reactive.HiddenHttpMethodFilter;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 import org.thymeleaf.spring6.ISpringWebFluxTemplateEngine;
 import org.thymeleaf.spring6.view.reactive.ThymeleafReactiveViewResolver;
@@ -50,5 +52,10 @@ public class WebConfig implements WebFluxConfigurer {
         resolver.setDefaultCharset(StandardCharsets.UTF_8);
         resolver.setSupportedMediaTypes(List.of(MediaType.parseMediaType("text/html; charset=UTF-8")));
         return resolver;
+    }
+
+    @Bean
+    public WebFilter hiddenHttpMethodFilter() {
+        return new HiddenHttpMethodFilter();
     }
 }
