@@ -108,9 +108,8 @@ class DefaultControllerIT extends AbstractTest {
             webTestClient.mutate()
                     .defaultCookie("SESSION", sessionId)
                     .build()
-                    .post()
+                    .delete()
                     .uri("/items/" + ITEM_ID + "/remove")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .accept(MediaType.TEXT_HTML)
                     .exchange()
                     .expectStatus().is3xxRedirection();

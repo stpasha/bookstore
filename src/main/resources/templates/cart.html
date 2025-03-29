@@ -32,7 +32,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <form th:action="@{'/items/' + ${item.key} + '/remove'}" method="post">
+                        <form th:action="@{'/items/' + ${item.key} + '/remove'}" th:method="delete">
 <!--                            TODO REMOVE-->
                             <input type="hidden" name="productId" th:value="${item.key}"/>
                             <span th:text="${item.value.quantity}"></span>

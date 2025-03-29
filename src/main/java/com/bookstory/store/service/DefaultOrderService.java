@@ -71,7 +71,6 @@ public class DefaultOrderService implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<OrderDTO> getOrder(Long id) {
         log.info("get order by id {}", id);
         return orderRepository.findById(id)
@@ -84,7 +83,6 @@ public class DefaultOrderService implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Flux<OrderDTO> getAllOrders() {
         log.info("get all order");
         return orderRepository.findAll().map(orderMapper::toDto);

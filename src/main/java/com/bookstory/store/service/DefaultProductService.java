@@ -38,7 +38,6 @@ public class DefaultProductService implements ProductService {
     final private ObjectValidator objectValidator;
 
     @Override
-    @Transactional(readOnly = true)
     public Mono<Page<ProductDTO>> getAllProducts(String title, Pageable pageable) {
         Mono<List<ProductDTO>> productDTOS;
         Mono<Long> count;

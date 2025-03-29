@@ -62,7 +62,7 @@ public class ItemController {
         });
     }
 
-    @PostMapping("/{id}/remove")
+    @DeleteMapping("/{id}/remove")
     public Mono<String> removeItemFromCart(@PathVariable("id") Long id,
                                            @ModelAttribute("cart") Mono<CartDTO> cartMono) {
         return cartMono.flatMap(cart -> {
