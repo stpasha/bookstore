@@ -9,6 +9,8 @@ services:
     depends_on:
       intershop:
         condition: service_healthy
+      redis-app:
+        condition: service_healthy
     networks:
       - shop-net
   intershop:
@@ -42,6 +44,19 @@ services:
       - 8082:8080
     networks:
       - shop-net
+  redis-app:
+    image: redis:7.4.2
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    ports:
+      - 6379:6379
+    networks:
+      - shop-net
+    command: [ "redis-server", "--requirepass", "swordfish" ]
 networks:
   shop-net:
     driver: bridge

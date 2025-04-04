@@ -22,10 +22,13 @@ import com.bookstory.store.web.mapper.NewProductMapper;
 import com.bookstory.store.web.mapper.OrderMapper;
 import com.bookstory.store.web.mapper.ProductMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -134,7 +137,7 @@ public class ServiceTest extends AbstractTest {
 
         @Test
         public void getProduct_ShouldReturnProduct_WhenExists() {
-            Product product = testDataFactory.createProduct();
+            Product product = TestDataFactory.PRODUCTS.get(0);
 
             when(productRepository.findById(anyLong())).thenReturn(Mono.just(product));
 
@@ -151,6 +154,17 @@ public class ServiceTest extends AbstractTest {
 
     @Nested
     class OrderServiceTest {
+
+        @Autowired
+        private CacheManager cacheManager;
+
+        @BeforeEach
+        void clearCache() {
+            Cache cache = cacheManager.getCache("products");
+            if (cache != null) {
+                cache.clear();
+            }
+        }
 
         @Test
         public void createOrder() {

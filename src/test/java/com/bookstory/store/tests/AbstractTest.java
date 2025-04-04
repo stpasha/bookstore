@@ -1,21 +1,29 @@
 package com.bookstory.store.tests;
 
+import com.redis.testcontainers.RedisContainer;
 import liquibase.command.CommandScope;
 import liquibase.exception.CommandExecutionException;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
 public abstract class AbstractTest {
     @Container
-    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("store")
             .withUsername("baseadm")
             .withPassword("test")
             .withInitScript("init-script.sql");
+
+    @Container // Декларируем объект учитываемым тест-контейнером
+    @ServiceConnection // Автоматически назначаем параметры соединения с контейнером
+    static final RedisContainer redisContainer =
+            new RedisContainer(DockerImageName.parse("redis:7.4.2-alpine"));
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {

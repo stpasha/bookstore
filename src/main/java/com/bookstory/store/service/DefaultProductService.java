@@ -9,6 +9,8 @@ import com.bookstory.store.web.mapper.NewProductMapper;
 import com.bookstory.store.web.mapper.ProductMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +40,7 @@ public class DefaultProductService implements ProductService {
     final private ObjectValidator objectValidator;
 
     @Override
+    @Cacheable(cacheNames = "productsPage", keyGenerator = "pageableProductKeyGenerator")
     public Mono<Page<ProductDTO>> getAllProducts(String title, Pageable pageable) {
         Mono<List<ProductDTO>> productDTOS;
         Mono<Long> count;
@@ -60,6 +63,7 @@ public class DefaultProductService implements ProductService {
     }
 
     @Override
+    @Cacheable(cacheNames = "products", key = "#id")
     public Mono<ProductDTO> getProduct(Long id) {
         log.info("Fetching product with id {}", id);
 
@@ -71,6 +75,7 @@ public class DefaultProductService implements ProductService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    @CacheEvict(cacheNames = {"products", "productsPage"}, allEntries = true)
     public Mono<List<Product>> addProducts(Flux<NewProductDTO> productList) {
         return objectValidator.validate(productList)
                 .flatMap(newProductDTO -> {

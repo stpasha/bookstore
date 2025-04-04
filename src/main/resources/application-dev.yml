@@ -17,11 +17,16 @@ spring:
     password: basepass                          # Пароль пользователя
     pool:
       enabled: true                               # Включение пула соединений
-      initial-size: 10                            # Начальное количество соединений в пуле
-      max-size: 50                                # Максимальное количество соединений
+      initial-size: 5                             # Начальное количество соединений в пуле
+      max-size: 10                                # Максимальное количество соединений
       max-idle-time: 30s                          # Время бездействия соединения перед закрытием
       max-life-time: 10m                          # Максимальное время жизни соединения
       validation-query: SELECT 1                  # SQL-запрос для проверки работоспособности соединения
   datasource:
     init: never
     schema: storedata
+  data:
+    redis:
+      host: redis-app
+      port: 6379
+      password: swordfish

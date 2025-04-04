@@ -41,7 +41,7 @@ public class TestDataFactory {
     }
 
     public ProductDTO getProductDTO(int i) {
-        Product product = products.get((int) i);
+        Product product = PRODUCTS.get((int) i);
         return ProductDTO.builder()
                 .id(product.getId())
                 .quantityAvailable(product.getQuantityAvailable())
@@ -158,13 +158,13 @@ public class TestDataFactory {
 
 
     public static Product getRandomProduct() {
-        if (products.isEmpty()) {
+        if (PRODUCTS.isEmpty()) {
             throw new IllegalStateException("Список продуктов пуст!");
         }
-        return products.get(new Random().nextInt(products.size()));
+        return PRODUCTS.get(new Random().nextInt(PRODUCTS.size()));
     }
 
-    static List<Product> products = Arrays.asList(
+    public static List<Product> PRODUCTS = Arrays.asList(
             Product.builder()
                     .id(1L)
                     .title("Java: The Complete Reference")

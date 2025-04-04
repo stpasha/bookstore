@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
@@ -21,7 +22,7 @@ import java.math.BigDecimal;
 @Builder
 @ToString
 @EqualsAndHashCode
-public class ProductDTO {
+public class ProductDTO implements Serializable {
     private Long id;
     @Size(max = 255, message = "Should be not greater than 255 symbols")
     @NotEmpty
