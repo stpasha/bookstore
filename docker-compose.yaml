@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: bookstore-web/Dockerfile
     ports:
       - "8080:8080"
       - "8000:8000"
@@ -10,6 +12,18 @@ services:
       intershop:
         condition: service_healthy
       redis-app:
+        condition: service_healthy
+    networks:
+      - shop-net
+  billing:
+    build:
+      context: .
+      dockerfile: bookstore-billing/Dockerfile
+    ports:
+      - "8081:8080"
+      - "8001:8000"
+    depends_on:
+      intershop:
         condition: service_healthy
     networks:
       - shop-net

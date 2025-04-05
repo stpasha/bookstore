@@ -1,0 +1,126 @@
+openapi: 3.0.1
+info:
+  title: Bookstore billing API
+  description: API для обработки биллинговых операций
+  version: 1.0
+  contact:
+    name: Support for bookstore app
+    email: tbd@tbd.com
+    url: https://book.store/support
+paths:
+  /account/{id}:
+    get:
+      operationId: getAccountById
+      summary: Получить информацию о счёте
+      tags:
+        - AccountController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDTO'
+        '404':
+          description: Счёт не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDTO'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDTO'
+  /account/{id}/payment:
+    post:
+      operationId: createAccountPayment
+      summary: Создать новый платёжь
+      tags:
+        - AccountController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentDTO'
+      responses:
+        '201':
+          description: Платёжь успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDTO'
+        '404':
+          description: Счёт не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDTO'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDTO'
+tags:
+  - name: AccountController
+components:
+  schemas:
+    AccountDTO:
+      type: object
+      required:
+        - id
+        - amount
+        - version
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор счёта
+          example: 101
+        amount:
+          type: number
+          description: Баланс на счёте
+          example: 9.99
+        version:
+          type: integer
+          description: Версия объекта
+          example: 1
+    PaymentDTO:
+      type: object
+      required:
+        - accountId
+        - amount
+      properties:
+        accountId:
+          type: integer
+          format: int64
+          description: Ссылка на идентификатор счёта
+          example: 101
+        amount:
+          type: number
+          description: Сумма платежа
+          example: 9.99
+    MessageDTO:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Сообщение
+          example: Платёжь успешно создан! / Ошибка соединения / Счёт не найден

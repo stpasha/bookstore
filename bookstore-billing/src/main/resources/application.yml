@@ -1,0 +1,14 @@
+springdoc:
+  api-docs:
+    title: book store API
+    description: API для биллинга
+    version: OPENAPI_3_0
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    tryItOutEnabled: true
+    persistAuthorization: true
+spring:
+  name: billing
+  profiles:
+    active: dev

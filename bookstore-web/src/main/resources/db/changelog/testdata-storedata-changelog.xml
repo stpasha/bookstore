@@ -39,4 +39,16 @@
     </sql>
 </changeSet>
 
+<changeSet id="insert-accounts-data" author="your_name">
+    <preConditions onFail="MARK_RAN">
+        <sqlCheck expectedResult="0">SELECT COUNT(*) FROM storedata.accounts</sqlCheck>
+    </preConditions>
+
+    <sql>
+        INSERT INTO storedata.accounts (amount, version)
+        VALUES
+        (100000, 1);
+    </sql>
+</changeSet>
+
 </databaseChangeLog>

@@ -195,4 +195,71 @@
         </rollback>
     </changeSet>
 
+    <!-- Создаем последовательность account_id -->
+    <changeSet id="11" author="nomatter" context="schema-update" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.sequences WHERE sequence_schema = 'storedata' AND sequence_name = 'accounts_account_id_seq';
+                </sqlCheck>
+            </not>
+        </preConditions>
+
+
+        <createSequence sequenceName="accounts_account_id_seq" schemaName="storedata" startValue="1" incrementBy="1"/>
+
+        <rollback>
+            <dropSequence sequenceName="accounts_account_id_seq" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Создание таблицы accounts -->
+    <changeSet id="12" author="nomatter" context="schema-update" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'storedata' AND table_name = 'accounts';
+                </sqlCheck>
+            </not>
+        </preConditions>
+
+        <createTable tableName="accounts" schemaName="storedata">
+            <column name="account_id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addAutoIncrement tableName="accounts" columnName="account_id" schemaName="storedata"
+                          sequenceName="accounts_account_id_seq" />
+
+        <rollback>
+            <dropTable tableName="accounts" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="13" author="nomatter" runOnChange="true" >
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.columns
+                    WHERE table_schema = 'storedata'
+                    AND table_name = 'accounts'
+                    AND column_name = 'version';
+                </sqlCheck>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="accounts" schemaName="storedata">
+            <column name="version" type="DECIMAL(10,2)"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="accounts" columnName="version" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>

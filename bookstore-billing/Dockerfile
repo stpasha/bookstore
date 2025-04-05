@@ -4,7 +4,7 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Копируем JAR-файл в контейнер
-COPY store-0.1.jar /app/store-0.1.jar
+COPY bookstore-billing/billing-0.3.jar /app/billing-0.3.jar
 # Копируем imgs в контейнер
 COPY uploads /app/uploads
 
@@ -15,4 +15,4 @@ ENV JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8
 EXPOSE 8000
 
 # Запуск приложения через java
-CMD ["sh", "-c", "java $JAVA_OPTS -jar /app/store-0.1.jar"]
+CMD ["sh", "-c", "java $JAVA_OPTS -jar /app/billing-0.3.jar"]
