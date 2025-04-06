@@ -13,7 +13,7 @@
 <table style="width:70%;margin-left:auto;margin-right:auto;">
     <tr th:each="item : ${cart.items}">
         <td>
-            <table>
+            <table th:id="'item' + ${item.key}">
                 <tr>
                     <td>
                         <img width="300" height="300" th:src="${item.value.product.imageUrl}"/>
@@ -60,7 +60,12 @@
     </tr>
     <tr>
         <td style="text-align:right">
-            <b th:text="'Итого: ' + ${totalPrice} + ' руб.'"></b>
+            <div>
+                <span>Баланс:</span>
+                <span id="account-balance" th:text="${cart.accountDTO.amount}"></span>
+                <span>Итого:</span>
+                <span id="cart-total" th:text="${totalPrice} + ' руб.'"></span>
+            </div>
         </td>
     </tr>
     <tr>

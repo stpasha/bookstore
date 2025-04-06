@@ -4,18 +4,19 @@ document.addEventListener("DOMContentLoaded", function () {
             if (event.target.id === "plus" || event.target.id === "minus") {
                 event.preventDefault();
 
-                let quantitySpan = form.querySelector("#quantity-planned");
-                let quantityInput = form.querySelector("#product-quantity");
-                let availableQuantity = parseInt(form.querySelector("#quantity-available").textContent, 10);
-                let currentQuantity = parseInt(quantitySpan.textContent, 10);
-                let productId = form.querySelector("#productId").value;
-                let change = event.target.id === "plus" ? 1 : -1;
+                const quantitySpan = form.querySelector("#quantity-planned");
+                const quantityInput = form.querySelector("#product-quantity");
+                const availableQuantity = parseInt(form.querySelector("#quantity-available").textContent, 10);
+                const currentQuantity = parseInt(quantitySpan.textContent, 10);
+                const productId = form.querySelector("#productId").value;
+                const change = event.target.id === "plus" ? 1 : -1;
 
-                if ((event.target.id === "plus" && currentQuantity < availableQuantity) ||
-                    (event.target.id === "minus" && currentQuantity > 0)) {
+                // проверка доступности изменений
+                if ((change === 1 && currentQuantity < availableQuantity) ||
+                    (change === -1 && currentQuantity > 0)) {
 
                     try {
-                        let response = await fetch(`/items/${productId}/product/${change}`, {
+                        const response = await fetch(`/items/${productId}/product/${change}`, {
                             method: "PUT",
                             headers: {
                                 "Content-Type": "application/json"
@@ -23,9 +24,35 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
 
                         if (response.ok) {
-                            let newQuantity = await response.json();
-                            quantitySpan.textContent = newQuantity;
-                            quantityInput.value = newQuantity;
+                            const data = await response.json();
+
+
+                            quantitySpan.textContent = data.quantity;
+                            quantityInput.value = data.quantity;
+                            if (data.quantity === 0) {
+                                const itemTable = document.getElementById("item" + productId);
+                                if (itemTable) {
+                                    itemTable.remove();
+                                }
+                            }
+
+
+                            const cartTotalElem = document.querySelector("#cart-total");
+                            const balanceElem = document.querySelector("#account-balance");
+
+                            if (cartTotalElem && data.cartTotal !== undefined) {
+                                cartTotalElem.textContent = data.cartTotal.toFixed(2);
+                            }
+
+                            if (balanceElem && data.balance !== undefined) {
+                                balanceElem.textContent = data.balance.toFixed(2);
+                            }
+
+
+                            if (data.message) {
+                                console.warn(data.message);
+                            }
+
                         } else {
                             console.warn("Ошибка при обновлении количества товара");
                         }

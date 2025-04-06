@@ -1,5 +1,6 @@
 package com.bookstory.store.util;
 
+import com.bookstory.store.domain.AccountDTO;
 import com.bookstory.store.model.Item;
 import com.bookstory.store.model.Order;
 import com.bookstory.store.model.Product;
@@ -152,8 +153,8 @@ public class TestDataFactory {
 
     public CartDTO createCartDTO() {
         List<ItemDTO> items = createItemDTOs(3);
-        return new CartDTO(items.stream().collect(Collectors.toMap(itemDTO -> itemDTO.getProductId(), item -> item)),
-                faker.lorem().maxLengthSentence(255));
+        return new CartDTO(items.stream().collect(Collectors.toMap(ItemDTO::getProductId, item -> item)),
+                faker.lorem().maxLengthSentence(255), new AccountDTO().id(1L).amount(BigDecimal.valueOf(10000)));
     }
 
 

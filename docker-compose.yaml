@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: bookstore-web/Dockerfile
+#    environment:
+#      - BILLING_BASE_URL=${BILLING_BASE_URL}
+#      - REDIS_PASSWORD=${REDIS_PASSWORD}
     ports:
       - "8080:8080"
       - "8000:8000"

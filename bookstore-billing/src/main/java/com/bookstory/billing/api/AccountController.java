@@ -3,12 +3,16 @@ package com.bookstory.billing.api;
 import com.bookstory.billing.domain.AccountDTO;
 import com.bookstory.billing.domain.MessageDTO;
 import com.bookstory.billing.domain.PaymentDTO;
-import com.bookstory.billing.repository.AccountRepository;
+import com.bookstory.billing.exception.InsufficientBalanceException;
+import com.bookstory.billing.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -18,17 +22,23 @@ import reactor.core.publisher.Mono;
 @RequestMapping
 public class AccountController implements AccountApi {
 
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
     @Override
-    public Mono<ResponseEntity<MessageDTO>> createAccountPayment(Long id, Mono<PaymentDTO> paymentDTO, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<MessageDTO>> createAccountPayment(Long id, @Valid Mono<PaymentDTO> paymentDTO, ServerWebExchange exchange) {
         log.error("entered overriden createAccountPayment");
-        return AccountApi.super.createAccountPayment(id, paymentDTO, exchange);
+        return accountService.processPayment(id, paymentDTO)
+                .thenReturn(ResponseEntity.ok(new MessageDTO().message("Payment successful")))
+                .onErrorResume(InsufficientBalanceException.class, ex ->
+                        Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body(new MessageDTO().message(ex.getMessage())))
+                );
     }
 
     @Override
     public Mono<ResponseEntity<AccountDTO>> getAccountById(Long id, ServerWebExchange exchange) {
-        log.error("entered overriden getAccountById");
-        return AccountApi.super.getAccountById(id, exchange);
+        return accountService.getAccountById(id)
+                .map(ResponseEntity::ok)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")));
     }
 }

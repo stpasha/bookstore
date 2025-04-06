@@ -1,5 +1,6 @@
 package com.bookstory.store.web.dto;
 
+import com.bookstory.store.domain.AccountDTO;
 import lombok.*;
 
 import java.io.Serializable;
@@ -14,4 +15,5 @@ import java.util.Map;
 public class CartDTO implements Serializable {
     private Map<Long, ItemDTO> items;
     private String comment;
+    private AccountDTO accountDTO;
 }

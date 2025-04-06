@@ -98,6 +98,35 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.9.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/api-spec.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <output>${project.build.directory}/generated-sources/openapi</output>
+                            <apiPackage>com.bookstory.store.api</apiPackage>
+                            <modelPackage>com.bookstory.store.domain</modelPackage>
+                            <invokerPackage>com.bookstory.store.client</invokerPackage>
+                            <configOptions>
+                                <library>webclient</library> <!-- только интерфейсы -->
+                                <reactive>true</reactive> <!--реактивный API -->
+                                <useSpringBoot>true</useSpringBoot>
+                                <useTags>true</useTags>
+                                <openApiNullable>false</openApiNullable>
+                                <serializableModel>true</serializableModel>
+                                <useJakartaEe>true</useJakartaEe><!--новый стиль пакетов -->
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

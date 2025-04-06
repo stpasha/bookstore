@@ -30,3 +30,5 @@ spring:
       host: redis-app
       port: 6379
       password: swordfish
+billing:
+  base-url: http://billing:8080/

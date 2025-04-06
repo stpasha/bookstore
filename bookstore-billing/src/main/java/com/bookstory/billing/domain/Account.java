@@ -2,12 +2,13 @@ package com.bookstory.billing.domain;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 
-@Table(name = "orders", schema = "storedata")
+@Table(name = "accounts", schema = "storedata")
 @Getter
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -21,5 +22,6 @@ public class Account {
     @Column("amount")
     private BigDecimal amount;
     @Column("version")
+    @Version
     private Integer version;
 }

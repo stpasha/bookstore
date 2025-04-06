@@ -1,5 +1,7 @@
 package com.bookstory.store.service;
 
+import com.bookstory.store.api.AccountControllerApi;
+import com.bookstory.store.domain.PaymentDTO;
 import com.bookstory.store.model.Order;
 import com.bookstory.store.repository.OrderRepository;
 import com.bookstory.store.util.ObjectValidator;
@@ -28,13 +30,14 @@ public class DefaultOrderService implements OrderService {
     final private ItemService itemService;
     final private ProductService productService;
     final private ObjectValidator objectValidator;
+    final private AccountControllerApi accountControllerApi;
+
 
     @Override
     @Transactional
     public Mono<OrderDTO> createOrder(Mono<OrderDTO> order) {
-        log.info("create order {}", order);
-
         return order.flatMap(orderDTO -> {
+            log.info("Creating order: {}", orderDTO);
             objectValidator.validate(orderDTO);
             if (orderDTO.getItems() == null || orderDTO.getItems().isEmpty()) {
                 return Mono.error(new IllegalArgumentException("Order must contain at least one item."));
@@ -48,7 +51,6 @@ public class DefaultOrderService implements OrderService {
                     .flatMap(totalSum -> {
                         orderDTO.setTotal(totalSum);
                         Order orderEntity = orderMapper.toEntity(orderDTO);
-
                         return orderRepository.save(orderEntity)
                                 .flatMap(savedOrder -> {
                                     Flux<ItemDTO> itemDTOs = Flux.fromIterable(orderDTO.getItems())
@@ -64,7 +66,10 @@ public class DefaultOrderService implements OrderService {
                                                         .map(itemMapper::toEntity)
                                                         .toList());
                                                 return orderMapper.toDto(savedOrder);
-                                            });
+                                            }).flatMap(finalOrder -> accountControllerApi.createAccountPayment(
+                                                            1L, new PaymentDTO().accountId(1L).amount(totalSum))
+                                                    .thenReturn(finalOrder)
+                                            );
                                 });
                     });
         });

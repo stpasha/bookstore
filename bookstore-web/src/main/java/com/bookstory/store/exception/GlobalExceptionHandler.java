@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NoResourceFoundException.class)
+    @ExceptionHandler({NoResourceFoundException.class, BillingIsNotAvailableException.class})
     public Mono<Rendering> handleNoResourceFoundException(NoResourceFoundException ex, ServerWebExchange exchange) {
         log.error("Resource not found: {}", ex.getMessage(), ex);
         return Mono.just(Rendering.view("oops")
