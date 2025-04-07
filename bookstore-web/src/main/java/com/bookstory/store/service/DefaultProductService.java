@@ -3,6 +3,7 @@ package com.bookstory.store.service;
 import com.bookstory.store.model.Product;
 import com.bookstory.store.repository.ProductRepository;
 import com.bookstory.store.util.ObjectValidator;
+import com.bookstory.store.web.dto.ItemDTO;
 import com.bookstory.store.web.dto.NewProductDTO;
 import com.bookstory.store.web.dto.ProductDTO;
 import com.bookstory.store.web.mapper.NewProductMapper;
@@ -63,8 +64,30 @@ public class DefaultProductService implements ProductService {
     }
 
     @Override
-    @Cacheable(cacheNames = "products", key = "#id")
     public Mono<ProductDTO> getProduct(Long id) {
+        log.info("Fetching product with id {}", id);
+
+        return repository.findById(id)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Product must not be empty")))
+                .map(productMapper::toDto)
+                .doOnSuccess(product -> log.info("Found product: {}", product));
+    }
+
+    @Override
+    public Mono<ProductDTO> updateProductQuantity(Mono<ItemDTO> itemDTOMono) {
+        return itemDTOMono.flatMap(itemDTO -> {
+            log.info("Fetching update product with item {}", itemDTO);
+            return repository.findById(itemDTO.getProductId()).flatMap(product -> {
+                product.setQuantityAvailable(Math.subtractExact(product.getQuantityAvailable(), itemDTO.getQuantity()));
+                log.info("Fetching update product with item {}", product);
+                return repository.save(product).map(productMapper::toDto);
+            });
+        });
+    }
+
+    @Override
+    @Cacheable(cacheNames = "products", key = "#id")
+    public Mono<ProductDTO> getProductCache(Long id) {
         log.info("Fetching product with id {}", id);
 
         return repository.findById(id)

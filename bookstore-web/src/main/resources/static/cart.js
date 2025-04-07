@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const productId = form.querySelector("#productId").value;
                 const change = event.target.id === "plus" ? 1 : -1;
 
-                // проверка доступности изменений
                 if ((change === 1 && currentQuantity < availableQuantity) ||
                     (change === -1 && currentQuantity > 0)) {
 
@@ -26,9 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (response.ok) {
                             const data = await response.json();
 
-
                             quantitySpan.textContent = data.quantity;
                             quantityInput.value = data.quantity;
+
                             if (data.quantity === 0) {
                                 const itemTable = document.getElementById("item" + productId);
                                 if (itemTable) {
@@ -36,10 +35,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             }
 
-
                             const cartTotalElem = document.querySelector("#cart-total");
                             const balanceElem = document.querySelector("#account-balance");
-
+                            // Логика заполнения сумм общих
                             if (cartTotalElem && data.cartTotal !== undefined) {
                                 cartTotalElem.textContent = data.cartTotal.toFixed(2);
                             }
@@ -48,6 +46,17 @@ document.addEventListener("DOMContentLoaded", function () {
                                 balanceElem.textContent = data.balance.toFixed(2);
                             }
 
+                            // Логика управления видимостью
+                            const messageElem = document.querySelector("#message");
+                            const buyForm = document.querySelector("#buy");
+
+                            if (data.cartTotal > data.balance) {
+                                if (messageElem) messageElem.style.display = "inline";
+                                if (buyForm) buyForm.style.display = "none";
+                            } else {
+                                if (messageElem) messageElem.style.display = "none";
+                                if (buyForm) buyForm.style.display = "block";
+                            }
 
                             if (data.message) {
                                 console.warn(data.message);

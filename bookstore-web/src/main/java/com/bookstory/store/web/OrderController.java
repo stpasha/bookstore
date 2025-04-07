@@ -1,5 +1,6 @@
 package com.bookstory.store.web;
 
+import com.bookstory.store.exception.ErrorDetails;
 import com.bookstory.store.service.OrderService;
 import com.bookstory.store.web.dto.CartDTO;
 import com.bookstory.store.web.dto.OrderDTO;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.reactive.result.view.Rendering;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Controller
@@ -69,8 +72,8 @@ public class OrderController {
                 .onErrorResume(e -> {
                     log.error("Order is not created: {}", e.getMessage());
                     return Mono.just(Rendering.view("error")
-                            .modelAttribute("error", "Order is not created")
-                            .build());
+                            .modelAttribute("errorDetails", new ErrorDetails(LocalDateTime.now(), e.getMessage(),
+                                    exchange.getRequest().getURI().toString())).build());
                 });
     }
 }

@@ -1,6 +1,9 @@
 package com.bookstory.store.tests.service;
 
 import com.bookstory.store.annotations.StoreTestAnnotation;
+import com.bookstory.store.api.AccountControllerApi;
+import com.bookstory.store.domain.MessageDTO;
+import com.bookstory.store.domain.PaymentDTO;
 import com.bookstory.store.model.Item;
 import com.bookstory.store.model.Order;
 import com.bookstory.store.model.Product;
@@ -81,6 +84,9 @@ public class ServiceTest extends AbstractTest {
 
     @MockitoBean
     private ItemRepository itemRepository;
+
+    @MockitoBean
+    private AccountControllerApi accountControllerApi;
 
     @MockitoBean
     private ListItemRepository listItemRepository;
@@ -174,6 +180,10 @@ public class ServiceTest extends AbstractTest {
 
             Order order = orderMapper.toEntity(orderDTO);
 
+            when(accountControllerApi.createAccountPayment(anyLong(), any(PaymentDTO.class)))
+                    .thenAnswer(invocation -> Mono.just(new MessageDTO().message("Платёжь создан")));
+            when(productRepository.save(any(Product.class)))
+                    .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
             when(productRepository.findById(anyLong()))
                     .thenAnswer(invocation -> {
                         Long productId = invocation.getArgument(0);
@@ -196,7 +206,7 @@ public class ServiceTest extends AbstractTest {
                     })
                     .verifyComplete();
             verify(orderRepository, times(1)).save(any(Order.class));
-            verify(productRepository, times(order.getItems().size())).findById(anyLong());
+            verify(productRepository, times(order.getItems().size() * 2)).findById(anyLong());
         }
 
         @Test

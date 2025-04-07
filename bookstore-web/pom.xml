@@ -15,6 +15,13 @@
         <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.25.1</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -114,6 +121,8 @@
                             <apiPackage>com.bookstory.store.api</apiPackage>
                             <modelPackage>com.bookstory.store.domain</modelPackage>
                             <invokerPackage>com.bookstory.store.client</invokerPackage>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
                             <configOptions>
                                 <library>webclient</library> <!-- только интерфейсы -->
                                 <reactive>true</reactive> <!--реактивный API -->

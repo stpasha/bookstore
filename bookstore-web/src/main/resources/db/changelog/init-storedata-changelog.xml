@@ -196,7 +196,7 @@
     </changeSet>
 
     <!-- Создаем последовательность account_id -->
-    <changeSet id="11" author="nomatter" context="schema-update" runOnChange="true">
+    <changeSet id="11" author="nomatter" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>
                 <sqlCheck expectedResult="1">
@@ -214,7 +214,7 @@
     </changeSet>
 
     <!-- Создание таблицы accounts -->
-    <changeSet id="12" author="nomatter" context="schema-update" runOnChange="true">
+    <changeSet id="12" author="nomatter" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>
                 <sqlCheck expectedResult="1">
@@ -254,7 +254,7 @@
         </preConditions>
 
         <addColumn tableName="accounts" schemaName="storedata">
-            <column name="version" type="DECIMAL(10,2)"/>
+            <column name="version" type="BIGINT"/>
         </addColumn>
 
         <rollback>

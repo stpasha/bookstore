@@ -6,9 +6,9 @@
 <body>
 <h1>Please contact administrator</h1>
 <h2>Error Details:</h2>
-<p>Timestamp: <span th:text="${errorDetails.dateTime}"></span></p>
-<p>Message: <span th:text="${errorDetails.message}"></span></p>
-<p>Details: <span th:text="${errorDetails.description}"></span></p>
+<p>Timestamp: <span th:text="${errorDetails?.dateTime}"></span></p>
+<p>Message: <span th:text="${errorDetails?.message}"></span></p>
+<p>Details: <span th:text="${errorDetails?.description}"></span></p>
 <div id="err_img">
     <img width="300" height="300" th:src="@{/err.gif}"/>
 </div>

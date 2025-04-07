@@ -47,7 +47,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public Mono<Rendering> getProduct(@PathVariable Long id) {
-        return productService.getProduct(id)
+        return productService.getProductCache(id)
                 .map(product -> {
                     log.info("products queried {}", product);
                     return Rendering.view("item").modelAttribute("product", product).build();

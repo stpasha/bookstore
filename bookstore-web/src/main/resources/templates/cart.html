@@ -65,13 +65,17 @@
                 <span id="account-balance" th:text="${cart.accountDTO.amount}"></span>
                 <span>Итого:</span>
                 <span id="cart-total" th:text="${totalPrice} + ' руб.'"></span>
+                <span id="message"
+                      th:style="${cart.accountDTO.amount > totalPrice ? 'display:none;' : 'display:block;color:red;'}">
+                Недостаточно средств для покупки. Пополните счёт.
+                </span>
             </div>
         </td>
     </tr>
     <tr>
         <td style="text-align:right">
-            <form action="/orders" method="post">
-                <label for="comment">Комментарий: </label>
+            <form action="/orders" id="buy" th:style="${cart.accountDTO.amount <= totalPrice ? 'display:none;' : 'display:block;'}" method="post">
+            <label for="comment">Комментарий: </label>
                 <input id="comment" type="text" name="comment" />
                 <button>Купить</button>
             </form>

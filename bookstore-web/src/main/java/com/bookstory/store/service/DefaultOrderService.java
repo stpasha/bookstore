@@ -59,7 +59,7 @@ public class DefaultOrderService implements OrderService {
                                                 return itemDTO;
                                             });
 
-                                    return itemService.createItems(itemDTOs)
+                                    return itemService.createItems(itemDTOs).flatMap(itemDTO -> productService.updateProductQuantity(Mono.just(itemDTO)).thenReturn(itemDTO))
                                             .collectList()
                                             .map(savedItems -> {
                                                 savedOrder.setItems(savedItems.stream()
@@ -69,6 +69,10 @@ public class DefaultOrderService implements OrderService {
                                             }).flatMap(finalOrder -> accountControllerApi.createAccountPayment(
                                                             1L, new PaymentDTO().accountId(1L).amount(totalSum))
                                                     .thenReturn(finalOrder)
+                                                    .onErrorResume(ex -> {
+                                                        log.error("Failed to create payment for order {}: {}", finalOrder.getId(), ex.getMessage());
+                                                        return Mono.error(new RuntimeException("Failed to create payment: " + ex.getMessage()));
+                                                    })
                                             );
                                 });
                     });
