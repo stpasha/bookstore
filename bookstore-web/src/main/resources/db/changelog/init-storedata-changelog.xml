@@ -122,9 +122,6 @@
             <column name="product_id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="item_id" type="BIGINT">
-                <constraints nullable="true"/>
-            </column>
             <column name="title" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -135,31 +132,11 @@
             <column name="price" type="DECIMAL(10,2)"/>
             <column name="quantity_available" type="BIGINT"/>
         </createTable>
-        <addForeignKeyConstraint baseTableName="products" baseColumnNames="item_id"
-                                 referencedTableName="items" referencedColumnNames="item_id"
-                                 constraintName="fk_products_items"
-                                 schemaName="storedata"/>
         <rollback>
             <dropTable tableName="products" schemaName="storedata"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="7" author="nomatter" runOnChange="true">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <sqlCheck expectedResult="0">
-                    SELECT COUNT(*) FROM information_schema.columns
-                    WHERE table_schema = 'storedata' AND table_name = 'products' AND column_name = 'item_id';
-                </sqlCheck>
-            </not>
-        </preConditions>
-        <dropColumn tableName="products" columnName="item_id" schemaName="storedata"/>
-        <rollback>
-            <addColumn tableName="products" schemaName="storedata">
-                <column name="item_id" type="BIGINT"/>
-            </addColumn>
-        </rollback>
-    </changeSet>
 
 
     <changeSet id="8" author="nomatter" runOnChange="true">
@@ -259,6 +236,171 @@
 
         <rollback>
             <dropColumn tableName="accounts" columnName="version" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="14" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.sequences WHERE sequence_schema = 'storedata' AND sequence_name = 'users_user_id_seq';
+                </sqlCheck>
+            </not>
+        </preConditions>
+
+
+        <createSequence sequenceName="users_user_id_seq" schemaName="storedata" startValue="1" incrementBy="1"/>
+
+        <rollback>
+            <dropSequence sequenceName="users_user_id_seq" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+
+
+    <!-- Создание таблицы users -->
+    <changeSet id="15" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'storedata' AND table_name = 'users';
+                </sqlCheck>
+            </not>
+        </preConditions>
+        <createTable tableName="users" schemaName="storedata">
+            <column name="user_id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="enabled" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addAutoIncrement tableName="users" columnName="user_id" schemaName="storedata"
+                          sequenceName="users_user_id_seq" />
+
+        <rollback>
+            <dropTable tableName="users" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+
+    <!-- Создание таблицы users_roles -->
+    <changeSet id="16" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'storedata' AND table_name = 'users_roles';
+                </sqlCheck>
+            </not>
+        </preConditions>
+
+        <createTable tableName="users_roles" schemaName="storedata">
+            <column name="user_id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(255)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="users_roles" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="user_id"
+                                 constraintName="fk_users_roles"
+                                 schemaName="storedata"/>
+
+        <rollback>
+            <dropTable tableName="users_roles" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="17" author="nomatter" runOnChange="true" >
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.columns
+                    WHERE table_schema = 'storedata'
+                    AND table_name = 'accounts'
+                    AND column_name = 'user_id';
+                </sqlCheck>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="accounts" schemaName="storedata">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="accounts" columnName="user_id" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="18" author="nomatter" runOnChange="true" >
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.columns
+                    WHERE table_schema = 'storedata'
+                    AND table_name = 'orders'
+                    AND column_name = 'user_id';
+                </sqlCheck>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="orders" schemaName="storedata">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="orders" columnName="user_id" schemaName="storedata"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Добавление внешнего ключа для таблицы orders к users -->
+    <changeSet id="19" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.key_column_usage
+                    WHERE table_schema = 'storedata' AND table_name = 'orders'
+                    AND constraint_name = 'fk_orders_users';
+                </sqlCheck>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="orders" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="user_id"
+                                 constraintName="fk_orders_users"
+                                 schemaName="storedata" onDelete="CASCADE"/>
+        <rollback>
+            <dropForeignKeyConstraint baseTableName="orders" constraintName="fk_orders_users"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Добавление внешнего ключа для таблицы accounts к users -->
+    <changeSet id="20" author="nomatter" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.key_column_usage
+                    WHERE table_schema = 'storedata' AND table_name = 'accounts'
+                    AND constraint_name = 'fk_accounts_users';
+                </sqlCheck>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="accounts" baseColumnNames="user_id"
+                                 referencedTableName="users" referencedColumnNames="user_id"
+                                 constraintName="fk_accounts_users"
+                                 schemaName="storedata" onDelete="CASCADE"/>
+        <rollback>
+            <dropForeignKeyConstraint baseTableName="accounts" constraintName="fk_accounts_users"/>
         </rollback>
     </changeSet>
 
