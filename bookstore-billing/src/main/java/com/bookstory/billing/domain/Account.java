@@ -24,4 +24,6 @@ public class Account {
     @Column("version")
     @Version
     private Integer version;
+    @Column("user_id")
+    private Long userId;
 }

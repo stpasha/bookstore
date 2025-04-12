@@ -66,9 +66,11 @@ public class DefaultOrderService implements OrderService {
                                                         .map(itemMapper::toEntity)
                                                         .toList());
                                                 return orderMapper.toDto(savedOrder);
-                                            }).flatMap(finalOrder -> accountControllerApi.createAccountPayment(
-                                                            1L, new PaymentDTO().accountId(1L).amount(totalSum))
-                                                    .thenReturn(finalOrder)
+                                            }).flatMap(finalOrder -> accountControllerApi.getAccountByUserId(finalOrder.getUserId())
+                                                    .flatMap(accountDTO -> {
+                                                        return accountControllerApi.createAccountPayment(
+                                                                        accountDTO.getId(), new PaymentDTO().accountId(accountDTO.getId()).amount(totalSum));
+                                                    }).thenReturn(finalOrder)
                                                     .onErrorResume(ex -> {
                                                         log.error("Failed to create payment for order {}: {}", finalOrder.getId(), ex.getMessage());
                                                         return Mono.error(new RuntimeException("Failed to create payment: " + ex.getMessage()));

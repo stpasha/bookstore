@@ -38,7 +38,7 @@ public class DefaultServiceTest extends AbstractTest {
 
     @BeforeEach
     void setUp() {
-        accountDTO = new AccountDTO(1L, BigDecimal.valueOf(1000), 1);
+        accountDTO = new AccountDTO(1L, 1L, BigDecimal.valueOf(1000), 1);
         paymentDTO = new PaymentDTO().amount(BigDecimal.valueOf(100)).accountId(1L);
     }
 

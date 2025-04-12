@@ -40,6 +40,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MessageDTO'
+  /account/user/{userId}:
+    get:
+      operationId: getAccountByUserId
+      summary: Получить информацию о счёте по пользователю
+      tags:
+        - AccountController
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDTO'
+        '404':
+          description: Счёт не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDTO'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDTO'
   /account/{id}/payment:
     post:
       operationId: createAccountPayment
@@ -86,6 +118,7 @@ components:
       type: object
       required:
         - id
+        - userId
         - amount
         - version
       properties:
@@ -93,6 +126,11 @@ components:
           type: integer
           format: int64
           description: Уникальный идентификатор счёта
+          example: 101
+        userId:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор пользователя
           example: 101
         amount:
           type: number

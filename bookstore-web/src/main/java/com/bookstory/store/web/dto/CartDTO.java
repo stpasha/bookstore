@@ -15,5 +15,6 @@ import java.util.Map;
 public class CartDTO implements Serializable {
     private Map<Long, ItemDTO> items;
     private String comment;
+    private String username;
     private AccountDTO accountDTO;
 }

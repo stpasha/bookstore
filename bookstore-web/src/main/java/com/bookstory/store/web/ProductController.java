@@ -28,8 +28,6 @@ public class ProductController {
 
     private final ProductService productService;
 
-    private final FileService fileService;
-
     @GetMapping
     public Mono<Rendering> listProducts(@RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "10") int size,
@@ -54,12 +52,4 @@ public class ProductController {
                 });
     }
 
-    @PostMapping("/upload")
-    public Mono<String> uploadFile(@RequestPart("file") FilePart imageFile) {
-        return fileService.getNewProductDtosFromFile(imageFile)
-                .collectList()
-                .flatMap(list -> productService
-                        .addProducts(Flux.fromIterable(list)))
-                .thenReturn("redirect:/products");
-    }
 }

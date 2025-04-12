@@ -41,4 +41,11 @@ public class AccountController implements AccountApi {
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")));
     }
+
+    public Mono<ResponseEntity<AccountDTO>> getAccountByUserId(Long userId, ServerWebExchange exchange) {
+        return accountService.getAccountByUserId(userId)
+                .map(ResponseEntity::ok)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found")));
+
+    }
 }

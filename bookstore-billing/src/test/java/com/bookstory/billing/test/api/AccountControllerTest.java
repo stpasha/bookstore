@@ -30,7 +30,8 @@ class AccountControllerTest {
     @MockitoBean
     private AccountService accountService;
 
-    private final Long accountId = 101L;
+    private final Long accountId = 1L;
+    private final Long userId = 1L;
 
     private PaymentDTO validPayment;
     private AccountDTO accountDTO;
@@ -38,7 +39,7 @@ class AccountControllerTest {
     @BeforeEach
     void setUp() {
         validPayment = new PaymentDTO(accountId, new BigDecimal("10.00"));
-        accountDTO = new AccountDTO(accountId, new BigDecimal("20.00"), 1);
+        accountDTO = new AccountDTO(accountId, userId, new BigDecimal("20.00"), 1);
     }
 
     @Test

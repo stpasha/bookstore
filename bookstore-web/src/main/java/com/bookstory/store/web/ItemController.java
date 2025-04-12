@@ -2,6 +2,8 @@ package com.bookstory.store.web;
 
 import com.bookstory.store.api.AccountControllerApi;
 import com.bookstory.store.domain.AccountDTO;
+import com.bookstory.store.model.User;
+import com.bookstory.store.repository.UserRepository;
 import com.bookstory.store.service.ProductService;
 import com.bookstory.store.web.dto.CartDTO;
 import com.bookstory.store.web.dto.ItemDTO;
@@ -9,6 +11,7 @@ import com.bookstory.store.web.dto.QuantityDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,16 +31,16 @@ public class ItemController {
 
     private final ProductService productService;
     private final AccountControllerApi accountControllerApi;
+    private final UserRepository userRepository;
 
     @ModelAttribute("cart")
     public Mono<CartDTO> initializeCart() {
-        //TODO временно используется ID 1L, нужно заменить на аккаунт авторизованного пользователя
-        return accountControllerApi.getAccountById(1L)
-                .map(accountDTO -> new CartDTO(new HashMap<>(), "", accountDTO))
-                .onErrorResume(throwable -> {
-                    log.warn("Биллинг сервис не доступен, продолжаем работу", throwable);
-                    return Mono.just(new CartDTO(new HashMap<>(), "", new AccountDTO().id(1L)));
-                });
+        return ReactiveSecurityContextHolder.getContext()
+                .flatMap(securityContext -> userRepository.findByUsername(securityContext.getAuthentication().getName())
+                        .flatMap(userDetails -> accountControllerApi.getAccountByUserId(((User)userDetails).getId())
+                .map(accountDTO -> new CartDTO(new HashMap<>(), "", userDetails.getUsername(), accountDTO))
+                ));
+
     }
 
     @PostMapping("/{id}/add")

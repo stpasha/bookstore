@@ -5,6 +5,7 @@ import com.bookstory.store.service.OrderService;
 import com.bookstory.store.web.dto.CartDTO;
 import com.bookstory.store.web.dto.OrderDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
@@ -45,6 +46,7 @@ public class OrderController {
     }
 
     @PostMapping
+    @PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<Rendering> createOrder(@SessionAttribute("cart") CartDTO cartDTO,
                                        ServerWebExchange exchange,
                                        SessionStatus sessionStatus) {
@@ -57,6 +59,7 @@ public class OrderController {
                 .flatMap(comment -> {
                     OrderDTO orderDTO = OrderDTO.builder()
                             .comment(comment)
+                            .userId(cartDTO.getAccountDTO().getUserId())
                             .items(cartDTO.getItems().values().stream().toList())
                             .build();
 

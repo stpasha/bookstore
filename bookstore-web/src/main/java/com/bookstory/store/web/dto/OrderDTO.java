@@ -25,4 +25,5 @@ public class OrderDTO {
     @ToString.Exclude
     private List<ItemDTO> items;
     private BigDecimal total;
+    private Long userId;
 }

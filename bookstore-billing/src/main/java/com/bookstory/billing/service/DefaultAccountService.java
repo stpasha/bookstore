@@ -1,5 +1,6 @@
 package com.bookstory.billing.service;
 
+import com.bookstory.billing.domain.Account;
 import com.bookstory.billing.domain.AccountDTO;
 import com.bookstory.billing.domain.PaymentDTO;
 import com.bookstory.billing.exception.InsufficientBalanceException;
@@ -7,6 +8,7 @@ import com.bookstory.billing.mapper.AccountMapper;
 import com.bookstory.billing.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
@@ -43,6 +45,10 @@ public class DefaultAccountService implements AccountService {
                     return accountRepository.save(account).map(accountMapper::toDto);
                 })
         );
+    }
+
+    public Mono<AccountDTO> getAccountByUserId(Long id) {
+        return accountRepository.findOne(Example.of(Account.builder().userId(id).build())).map(accountMapper::toDto);
     }
 
 }
