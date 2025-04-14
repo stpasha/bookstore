@@ -15,6 +15,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,6 +99,7 @@ public class DefaultProductService implements ProductService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    @Secured("ADMIN")
     @CacheEvict(cacheNames = {"products", "productsPage"}, allEntries = true)
     public Mono<List<Product>> addProducts(Flux<NewProductDTO> productList) {
         return objectValidator.validate(productList)

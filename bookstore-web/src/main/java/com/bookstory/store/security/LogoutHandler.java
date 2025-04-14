@@ -15,11 +15,11 @@ public class LogoutHandler extends SecurityContextServerLogoutHandler {
 
     @Override
     public Mono<Void> logout(WebFilterExchange exchange, Authentication authentication) {
-        return super.logout(exchange, authentication).then(exchange.getExchange().getSession().flatMap(webSession -> {
+        return exchange.getExchange().getSession().flatMap(webSession -> {
             if (authentication != null) {
                 sessionRegistry.unregisterSession(authentication.getName(), webSession.getId());
             }
             return webSession.invalidate();
-        }));
+        });
     }
 }

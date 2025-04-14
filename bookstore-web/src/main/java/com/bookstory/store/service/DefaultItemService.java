@@ -8,6 +8,7 @@ import com.bookstory.store.web.dto.OrderDTO;
 import com.bookstory.store.web.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -28,6 +29,7 @@ public class DefaultItemService implements ItemService {
 
     @Override
     @Transactional
+    @Secured("USER")
     public Flux<ItemDTO> createItems(Flux<ItemDTO> itemDTOs) {
         return itemRepository.saveAll(
                 objectValidator.validate(itemDTOs).map(itemMapper::toEntity)
@@ -35,6 +37,7 @@ public class DefaultItemService implements ItemService {
         ).map(itemMapper::toDto);
     }
 
+    @Secured("USER")
     @Override
     public Flux<ItemDTO> getItemsByOrderId(Mono<OrderDTO> orderDto) {
         return orderDto

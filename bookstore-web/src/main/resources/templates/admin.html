@@ -1,15 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <title>Загрузка файла со списком товаров</title>
-    <form action="/admin/products/upload" method="post" enctype="multipart/form-data">
-        <label for="file-input">Число товаров: </label>
-        <input type="file" name="file" id="file-input">
-        <button type="submit">Загрузить</button>
-    </form>
+    <link href="/css/default-ui.css" rel="stylesheet">
 </head>
 <body>
+<a href="/products" style="float:right;">
+    <b>ГЛАВНАЯ &cudarrr;</b>
+</a>
+<form action="/admin/products/upload" method="post"  enctype="multipart/form-data">
+    <label for="file-input">Число товаров: </label>
+    <input type="file" name="file" id="file-input">
+    <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
+    <button type="submit">Загрузить</button>
+</form>
+
+<form th:action="@{/admin/add/user}"  method="post">
+    <div>
+        <label for="username">Логин:</label>
+        <input id="username" name="username" type="text"  placeholder="Enter username" required maxlength="255"/>
+    </div>
+
+    <div>
+        <label for="password">Пароль:</label>
+        <input id="password" name="password" type="password"  placeholder="Enter password" required maxlength="255"/>
+    </div>
+
+    <div>
+        <label for="enabled">Активен:</label>
+        <input id="enabled" name="enabled" type="checkbox" value="true"/>
+    </div>
+
+    <label>Роли:</label><br/>
+    <label>
+        <input type="checkbox" name="authorities" value="ROLE_USER"/> ROLE_USER
+    </label><br/>
+    <label>
+        <input type="checkbox" name="authorities" value="ROLE_ADMIN"/> ROLE_ADMIN
+    </label><br/>
+    <div>
+        <button type="submit">Создать пользователя</button>
+    </div>
+</form>
 
 </body>
 </html>

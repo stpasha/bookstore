@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
+//@Component
 public class SessionRegistry {
     private final Map<String, String> userSessionMap = new ConcurrentHashMap<>();
 

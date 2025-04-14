@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-<changeSet id="insert-products-data" author="your_name">
+<changeSet id="insert-products-data" author="nomatter">
     <preConditions onFail="MARK_RAN">
         <sqlCheck expectedResult="0">SELECT COUNT(*) FROM storedata.products</sqlCheck>
     </preConditions>
@@ -39,7 +39,7 @@
     </sql>
 </changeSet>
 
-    <changeSet id="insert-users-data" author="your_name">
+    <changeSet id="insert-users-data" author="nomatter">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">SELECT COUNT(*) FROM storedata.users</sqlCheck>
         </preConditions>
@@ -48,14 +48,14 @@
             -- admin: пароль adminpass
             INSERT INTO storedata.users (username, password, enabled)
             VALUES
-            ('admin', '$2a$10$8hDOJ7SgWljsO.AHgkcCPe0Tdv7jzVZDNmfKe86RKHrK6SSfIFAZC', true),
+            ('admin', '$2a$10$8my17BQdiW5EYEDiFINb8uN3rIdMuooHkRXoUPb4by8.df10CwIHW', true),
 
             -- user: пароль userpass
-            ('user', '$2a$10$LKDgcxMH8IP4fYXgt6SoZ.lq2cJSWL.6iYdr7jC1NWTXKm2ObJDA2', true);
+            ('user', '$2a$10$C1mnH4M0UoXALMPMPrsh6.iX2rZfmsjpFRQLOnJilJTX20RHalYD2', true);
         </sql>
     </changeSet>
 
-    <changeSet id="insert-users-roles-data" author="your_name">
+    <changeSet id="insert-users-roles-data" author="nomatter">
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">SELECT COUNT(*) FROM storedata.users_roles</sqlCheck>
         </preConditions>
@@ -71,7 +71,7 @@
     </changeSet>
 
 
-    <changeSet id="insert-accounts-data" author="your_name">
+    <changeSet id="insert-accounts-data" author="nomatter">
     <preConditions onFail="MARK_RAN">
         <sqlCheck expectedResult="0">SELECT COUNT(*) FROM storedata.accounts</sqlCheck>
     </preConditions>
@@ -79,7 +79,7 @@
     <sql>
         INSERT INTO storedata.accounts (amount, version, user_id)
         VALUES
-        (0, 1, 1)
+        (0, 1, 1),
         (100000, 1, 2);
     </sql>
 </changeSet>

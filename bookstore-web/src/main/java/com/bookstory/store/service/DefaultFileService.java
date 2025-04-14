@@ -6,6 +6,7 @@ import org.apache.commons.csv.CSVParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,6 +37,7 @@ public class DefaultFileService implements FileService {
     }
 
     @Override
+    @Secured("ADMIN")
     public Flux<NewProductDTO> getNewProductDtosFromFile(FilePart filePart) {
         return DataBufferUtils.join(filePart.content())
                 .map(dataBuffer -> {

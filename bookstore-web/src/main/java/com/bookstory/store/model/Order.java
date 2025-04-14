@@ -46,7 +46,6 @@ public class Order {
     @Column("total")
     private BigDecimal total;
 
-    @Id
     @Column("user_id")
     private Long userId;
 

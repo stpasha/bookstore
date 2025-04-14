@@ -154,7 +154,7 @@ public class TestDataFactory {
     public CartDTO createCartDTO() {
         List<ItemDTO> items = createItemDTOs(3);
         return new CartDTO(items.stream().collect(Collectors.toMap(ItemDTO::getProductId, item -> item)),
-                faker.lorem().maxLengthSentence(255), new AccountDTO().id(1L).amount(BigDecimal.valueOf(10000)));
+                faker.lorem().maxLengthSentence(255), "user", new AccountDTO().id(1L).amount(BigDecimal.valueOf(10000)));
     }
 
 

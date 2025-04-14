@@ -1,24 +1,32 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <title>Заказ</title>
     <meta charset="UTF-8"/>
+    <link href="/css/default-ui.css" rel="stylesheet">
 </head>
 
 <body>
-<a href="/orders" style="float:right;">
-    <b>ЗАКАЗЫ &cudarrr;</b>
-</a>
-<a href="/items" style="float:right;">
-    <b>КОРЗИНА &cudarrr;</b>
-</a>
-<a href="/products" style="float:right;">
-    <b>ГЛАВНАЯ &cudarrr;</b>
-</a>
-<a href="/admin" style="float:right;">
-    <b>Настройка каталога &cudarrr;</b>
-</a>
+
+<div sec:authorize="isAuthenticated()">
+    <a href="/orders" style="float:right;">
+        <b>ЗАКАЗЫ &cudarrr;</b>
+    </a>
+    <a href="/items" style="float:right;">
+        <b>КОРЗИНА &cudarrr;</b>
+    </a>
+    <a href="/products" style="float:right;">
+        <b>ГЛАВНАЯ &cudarrr;</b>
+    </a>
+    <a href="javascript: document.logoutForm.submit()"  style="float:right;"> <b>Выйти&cudarrr;</b> </a>
+    <form name="logoutForm" th:action="@{/logout}" method="post"  th:hidden="true">
+        <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
+        <input hidden type="submit" value="Logout"/>
+    </form>
+</div>
+
+
 <h1 style="text-align:center" th:if="${newOrder}">Поздравляем! Успешная покупка! &#128578;</h1>
 <table style="width:70%;margin-left:auto;margin-right:auto;">
     <tr>

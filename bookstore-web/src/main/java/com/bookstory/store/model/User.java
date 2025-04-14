@@ -1,5 +1,8 @@
 package com.bookstory.store.model;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,8 +18,14 @@ public class User implements UserDetails {
     @Getter
     Long id;
 
+    @Size(max = 255, message = "Should be not greater than 255 symbols")
+    @NotEmpty
+    @NotNull
     private String username;
 
+    @Size(max = 255, message = "Should be not greater than 255 symbols")
+    @NotEmpty
+    @NotNull
     private String password;
 
     private boolean enabled;
@@ -43,6 +52,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
-
 
 }

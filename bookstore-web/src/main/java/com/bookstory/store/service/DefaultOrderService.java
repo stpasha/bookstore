@@ -11,6 +11,7 @@ import com.bookstory.store.web.mapper.ItemMapper;
 import com.bookstory.store.web.mapper.OrderMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.resource.NoResourceFoundException;
@@ -35,6 +36,7 @@ public class DefaultOrderService implements OrderService {
 
     @Override
     @Transactional
+    @Secured("USER")
     public Mono<OrderDTO> createOrder(Mono<OrderDTO> order) {
         return order.flatMap(orderDTO -> {
             log.info("Creating order: {}", orderDTO);
@@ -82,6 +84,7 @@ public class DefaultOrderService implements OrderService {
     }
 
     @Override
+    @Secured("USER")
     public Mono<OrderDTO> getOrder(Long id) {
         log.info("get order by id {}", id);
         return orderRepository.findById(id)
@@ -94,6 +97,7 @@ public class DefaultOrderService implements OrderService {
     }
 
     @Override
+    @Secured("USER")
     public Flux<OrderDTO> getAllOrders() {
         log.info("get all order");
         return orderRepository.findAll().map(orderMapper::toDto);
