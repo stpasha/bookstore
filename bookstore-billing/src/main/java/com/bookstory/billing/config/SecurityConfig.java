@@ -2,6 +2,7 @@ package com.bookstory.billing.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,6 +12,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.List;
 
+@Profile("!test")
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {

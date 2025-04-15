@@ -69,13 +69,14 @@ public class TestDataFactory {
                 .comment(faker.lorem().maxLengthSentence(255))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+                .userId(2L)
                 .items(new ArrayList<>())
                 .build();
     }
 
     public OrderDTO createOrderDTO() {
         List<ItemDTO> items = createItemDTOs(3);
-        return OrderDTO.builder().comment(faker.lorem().maxLengthSentence(255)).items(items).build();
+        return OrderDTO.builder().comment(faker.lorem().maxLengthSentence(255)).items(items).userId(2L).build();
     }
 
     public List<Order> createOrders(int count) {

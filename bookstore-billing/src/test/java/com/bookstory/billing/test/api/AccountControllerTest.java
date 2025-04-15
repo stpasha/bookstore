@@ -1,6 +1,7 @@
 package com.bookstory.billing.test.api;
 
 import com.bookstory.billing.api.AccountController;
+import com.bookstory.billing.config.TestConfig;
 import com.bookstory.billing.domain.AccountDTO;
 import com.bookstory.billing.domain.MessageDTO;
 import com.bookstory.billing.domain.PaymentDTO;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -22,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
 @WebFluxTest(controllers = AccountController.class)
+@Import(TestConfig.class)
 class AccountControllerTest {
 
     @Autowired

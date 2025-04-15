@@ -2,6 +2,7 @@ package com.bookstory.store.tests.service;
 
 import com.bookstory.store.annotations.StoreTestAnnotation;
 import com.bookstory.store.api.AccountControllerApi;
+import com.bookstory.store.domain.AccountDTO;
 import com.bookstory.store.domain.MessageDTO;
 import com.bookstory.store.domain.PaymentDTO;
 import com.bookstory.store.model.Item;
@@ -32,14 +33,17 @@ import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -182,6 +186,10 @@ public class ServiceTest extends AbstractTest {
 
             when(accountControllerApi.createAccountPayment(anyLong(), any(PaymentDTO.class)))
                     .thenAnswer(invocation -> Mono.just(new MessageDTO().message("Платёжь создан")));
+            when(accountControllerApi.getAccountById(anyLong()))
+                    .thenAnswer(invocation -> Mono.just(new AccountDTO().id(10L).userId(2L).amount(BigDecimal.valueOf(10000)).version(1)));
+            when(accountControllerApi.getAccountByUserId(anyLong()))
+                    .thenAnswer(invocation -> Mono.just(new AccountDTO().id(10L).userId(2L).amount(BigDecimal.valueOf(10000)).version(1)));
             when(productRepository.save(any(Product.class)))
                     .thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
             when(productRepository.findById(anyLong()))
@@ -242,15 +250,16 @@ public class ServiceTest extends AbstractTest {
         }
 
         @Test
+        @WithUserDetails("user")
         public void getOrders() {
             List<OrderDTO> orderDTOs = testDataFactory.createOrderDTOs(5);
             List<Order> orders = orderDTOs.stream().map(orderMapper::toEntity).toList();
 
-            when(orderRepository.findAll()).thenReturn(Flux.fromIterable(orders));
+            when(orderRepository.findAll(any(Example.class))).thenReturn(Flux.fromIterable(orders));
 
             StepVerifier.create(orderService.getAllOrders()).expectNextCount(orderDTOs.size()).verifyComplete();
 
-            verify(orderRepository, times(1)).findAll();
+            verify(orderRepository, times(1)).findAll(any(Example.class));
         }
     }
 
