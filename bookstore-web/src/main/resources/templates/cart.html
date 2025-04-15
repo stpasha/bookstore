@@ -44,10 +44,8 @@
                 <tr>
                     <td>
                         <form th:action="@{'/items/' + ${item.key} + '/remove'}"  th:method="delete">
-<!--                            TODO REMOVE-->
                             <input type="hidden" name="productId" th:value="${item.key}"/>
                             <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
-                            <span th:text="${item.value.quantity}"></span>
                             <button type="submit" name="action" value="delete" style="float:right;">&cross;</button>
                         </form>
                         <form class="changeQuant">
