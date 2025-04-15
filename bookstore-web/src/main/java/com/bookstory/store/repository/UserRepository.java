@@ -19,7 +19,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class UserRepository {
-    private static final String SELECT = """
+
+    private final DatabaseClient databaseClient;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public Mono<UserDetails> findByUsername(String username) {
+        return databaseClient.sql("""
             SELECT
                 usr.user_id,
                 usr.username,
@@ -32,14 +38,7 @@ public class UserRepository {
                 storedata.users_roles AS auth
                 ON (usr.user_id = auth.user_id)
             WHERE usr.username = :username
-            """;
-
-    private final DatabaseClient databaseClient;
-
-    private final PasswordEncoder passwordEncoder;
-
-    public Mono<UserDetails> findByUsername(String username) {
-        return databaseClient.sql(SELECT)
+            """)
                 .bind("username", username)
                 .map((row, metadata) -> new UserRoleRow(
                         row.get("user_id", Long.class),

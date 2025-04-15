@@ -61,7 +61,8 @@ public class DefaultOrderService implements OrderService {
                                                 return itemDTO;
                                             });
 
-                                    return itemService.createItems(itemDTOs).flatMap(itemDTO -> productService.updateProductQuantity(Mono.just(itemDTO)).thenReturn(itemDTO))
+                                    return itemService.createItems(itemDTOs).flatMap(itemDTO -> productService
+                                                    .updateProductQuantity(Mono.just(itemDTO)).thenReturn(itemDTO))
                                             .collectList()
                                             .map(savedItems -> {
                                                 savedOrder.setItems(savedItems.stream()

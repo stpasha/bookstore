@@ -46,7 +46,7 @@ public class OrderController {
     }
 
     @PostMapping
-    @PreAuthorize("#cartDTO.username == authentication.name")
+    //@PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<Rendering> createOrder(@SessionAttribute("cart") CartDTO cartDTO,
                                        ServerWebExchange exchange,
                                        SessionStatus sessionStatus) {

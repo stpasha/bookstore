@@ -16,6 +16,8 @@ services:
         condition: service_healthy
       redis-app:
         condition: service_healthy
+      keycloak:
+        condition: service_healthy
     networks:
       - shop-net
   billing:
@@ -27,6 +29,8 @@ services:
       - "8001:8000"
     depends_on:
       intershop:
+        condition: service_healthy
+      keycloak:
         condition: service_healthy
     networks:
       - shop-net
@@ -74,6 +78,29 @@ services:
     networks:
       - shop-net
     command: [ "redis-server", "--requirepass", "swordfish" ]
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    environment:
+      KC_HOSTNAME: keycloak
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT_BACKCHANNEL: true
+      KEYCLOAK_ADMIN: gatekeeper
+      KEYCLOAK_ADMIN_PASSWORD: swordfish
+      KC_HEALTH_ENABLED: true
+      KC_LOG_LEVEL: info
+      KEYCLOAK_EXTRA_ARGS: --import-realm
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080; echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost:8080\r\nConnection: close\r\n\r\n' >&3; cat <&3 | grep -q '\"status\": \"UP\"' && exit 0 || exit 1"]
+      interval: 15s
+      timeout: 2s
+      retries: 6
+    command: ["start-dev", "--import-realm", "--http-port", "8080"]
+    volumes: # Ignore if you don't have realm-export.json to migrate data
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+    ports:
+      - "7080:8080"
+    networks:
+      - shop-net
 networks:
   shop-net:
     driver: bridge

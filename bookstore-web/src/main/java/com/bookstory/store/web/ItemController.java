@@ -44,7 +44,7 @@ public class ItemController {
     }
 
     @PostMapping("/{id}/add")
-    @PreAuthorize("#cartDTO.username == authentication.name")
+    //@PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<String> addItemToCart(ServerWebExchange exchange,
                                       @PathVariable("id") Long id,
                                       @ModelAttribute("cart") Mono<CartDTO> cartMono) {
@@ -93,7 +93,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}/remove")
-    @PreAuthorize("#cartDTO.username == authentication.name")
+    //@PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<String> removeItemFromCart(@PathVariable("id") Long id,
                                            @ModelAttribute("cart") Mono<CartDTO> cartMono) {
         return cartMono.flatMap(cartDTO ->
@@ -114,7 +114,7 @@ public class ItemController {
     }
 
     @GetMapping
-    @PreAuthorize("#cartDTO.username == authentication.name")
+    //@PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<String> viewCart(Model model, @ModelAttribute("cart") Mono<CartDTO> cartMono) {
         return cartMono
                 .flatMap(cartDTO ->
@@ -148,7 +148,7 @@ public class ItemController {
 
     @PutMapping("/{id}/product/{quantity}")
     @ResponseBody
-    @PreAuthorize("#cartDTO.username == authentication.name")
+    //@PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<ResponseEntity<?>> modifyQuantity(@ModelAttribute("cart") Mono<CartDTO> cartMono,
                                                   @PathVariable("id") Long id,
                                                   @PathVariable("quantity") int quantity) {

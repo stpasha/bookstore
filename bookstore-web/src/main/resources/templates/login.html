@@ -11,9 +11,9 @@
 <div th:if="${errorMessage}" style="color: red;">
     <p th:text="${errorMessage}"></p>
 </div>
-<div th:if="${param.logout}" style="color: green;">
-    <p>Вы успешно вышли из системы.</p>
-</div>
+<!--<div th:if="${param.logout}" style="color: green;">-->
+<!--    <p>Вы успешно вышли из системы.</p>-->
+<!--</div>-->
 <form class="login-form" th:action="@{/login}" method="post">
 
     <p>

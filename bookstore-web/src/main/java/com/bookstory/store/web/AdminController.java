@@ -34,7 +34,7 @@ public class AdminController {
         return Mono.just("admin");
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/products/upload")
     public Mono<String> uploadFile(@RequestPart("file") FilePart imageFile) {
         return fileService.getNewProductDtosFromFile(imageFile)
                 .collectList()

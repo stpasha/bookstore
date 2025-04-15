@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -52,10 +51,17 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public Mono<Rendering> getProduct(@PathVariable Long id) {
-        return productService.getProductCache(id)
-                .map(product -> {
-                    log.info("products queried {}", product);
-                    return Rendering.view("item").modelAttribute("product", product).build();
+        Mono<String> roleMono = ReactiveSecurityContextHolder.getContext()
+                .map(context -> context.getAuthentication().getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.joining(",")))
+                .defaultIfEmpty("");
+        return Mono.zip(productService.getProductCache(id), roleMono)
+                .map(tuple -> {
+                    log.info("products queried {}", tuple.getT1());
+                    return Rendering.view("item")
+                            .modelAttribute("product", tuple.getT1())
+                            .modelAttribute("role", tuple.getT2()).build();
                 });
     }
 

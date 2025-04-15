@@ -54,7 +54,7 @@
 
                             <input type="hidden" id="product-quantity" name="quantity" th:value="${item.value.quantity ?: 0}"/>
                             <input type="hidden" id="productId" th:value="${item.value.product.id}"/>
-                            <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
+                            <input type="hidden" id="csrf" th:name="_csrf" th:value="${csrfToken}" />
                             <div>
                                 <span>Количество доступных:</span>
                                 <span id="quantity-available" th:text="${item.value.product.quantityAvailable}"></span>
