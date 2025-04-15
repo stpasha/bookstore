@@ -96,14 +96,19 @@ public class DefaultOrderService implements OrderService {
     @Override
     @Secured("USER")
     public Mono<OrderDTO> getOrder(Long id) {
-        log.info("get order by id {}", id);
-        return orderRepository.findById(id)
-                .map(orderMapper::toDto)
-                .flatMap(orderDTO -> itemService.getItemsByOrderId(Mono.just(orderDTO))
-                        .collectList()
-                        .doOnNext(orderDTO::setItems)
-                        .thenReturn(orderDTO))
-                .switchIfEmpty(Mono.error(new NoResourceFoundException("Order with id " + id + " not found")));
+        return ReactiveSecurityContextHolder.getContext()
+                .flatMap(securityContext ->
+                    userDetailsService.findByUsername(securityContext.getAuthentication().getName())
+                ).flatMap(user -> {
+                    log.info("get order by id {} userId {}", id, ((User)user).getId());
+                    return orderRepository.findById(id).filter(order -> order.getUserId().equals(((User)user).getId()))
+                            .map(orderMapper::toDto)
+                            .flatMap(orderDTO -> itemService.getItemsByOrderId(Mono.just(orderDTO))
+                                    .collectList()
+                                    .doOnNext(orderDTO::setItems)
+                                    .thenReturn(orderDTO))
+                            .switchIfEmpty(Mono.error(new NoResourceFoundException("Order with id " + id + " not found")));
+                });
     }
 
     @Override

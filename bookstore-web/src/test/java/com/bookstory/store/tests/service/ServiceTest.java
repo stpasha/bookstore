@@ -229,6 +229,7 @@ public class ServiceTest extends AbstractTest {
         }
 
         @Test
+        @WithUserDetails("user")
         public void getOrder() {
             OrderDTO orderDTO = testDataFactory.createOrderDTO();
             Order order = orderMapper.toEntity(orderDTO);
