@@ -28,7 +28,7 @@ public class DefaultUserDetailsService implements ReactiveUserDetailsService, Us
 
     @Override
     public Mono<UserDetails> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).filter(UserDetails::isEnabled);
     }
 
 

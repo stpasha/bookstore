@@ -14,6 +14,7 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -52,15 +53,15 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public ApiClient billingApiClient() {
-        ApiClient apiClient = new ApiClient();
-        apiClient.setBasePath(billingBaseUrl);
-        return apiClient;
+    public AccountControllerApi accountControllerApi(ApiClient billingOAuth2ApiClient) {
+        return new AccountControllerApi(billingOAuth2ApiClient);
     }
 
     @Bean
-    public AccountControllerApi accountControllerApi(ApiClient billingApiClient) {
-        return new AccountControllerApi(billingApiClient);
+    public ApiClient billingOAuth2ApiClient(WebClient billingWebClient) {
+        ApiClient apiClient = new ApiClient(billingWebClient);
+        apiClient.setBasePath(billingBaseUrl);
+        return apiClient;
     }
 
 }

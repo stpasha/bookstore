@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const quantitySpan = form.querySelector("#quantity-planned");
                 const quantityInput = form.querySelector("#product-quantity");
+                const csrf = form.querySelector("#csrf");
                 const availableQuantity = parseInt(form.querySelector("#quantity-available").textContent, 10);
                 const currentQuantity = parseInt(quantitySpan.textContent, 10);
                 const productId = form.querySelector("#productId").value;
@@ -18,7 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         const response = await fetch(`/items/${productId}/product/${change}`, {
                             method: "PUT",
                             headers: {
-                                "Content-Type": "application/json"
+                                "Content-Type": "application/json",
+                                "X-XSRF-TOKEN": csrf.value
                             }
                         });
 
