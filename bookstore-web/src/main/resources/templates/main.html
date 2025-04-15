@@ -11,6 +11,11 @@
 <body>
 <div th:if="${role.contains('ADMIN')}">
     <a href="/admin" style="float:right;"><b>Настройка каталога &cudarrr;</b></a>
+    <a href="javascript: document.logoutForm.submit()"  style="float:right;"> <b>Выйти&cudarrr;</b> </a>
+    <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+        <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
+        <input hidden type="submit" value="Logout"/>
+    </form>
 </div>
 
 
@@ -90,21 +95,23 @@
                 </tr>
                 <tr>
                     <td>
-                        <form th:action="@{'/items/' + ${product.id} + '/add'}"  method="post">
-                            <input type="hidden" id="product-quantity" name="quantity" th:value="${product.quantity ?: 0}"/>
-                            <div>
-                                <span>Количество доступных:</span>
-                                <span id="quantity-available" th:text="${product.quantityAvailable}"></span>
-                            </div>
-                            <div>
-                                <span>Количество выбранных:</span>
-                                <span id="quantity-planned" th:text="${product.quantity ?: 0}"></span>
-                            </div>
-                            <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
-                            <button id="minus">-</button>
-                            <button id="plus">+</button>
-                            <button name="action" style="float:right;">В корзину</button>
-                        </form>
+                        <div id="cart-interactions" th:if="${role.contains('USER')}">
+                            <form th:action="@{'/items/' + ${product.id} + '/add'}"  method="post">
+                                <input type="hidden" id="product-quantity" name="quantity" th:value="${product.quantity ?: 0}"/>
+                                <div>
+                                    <span>Количество доступных:</span>
+                                    <span id="quantity-available" th:text="${product.quantityAvailable}"></span>
+                                </div>
+                                <div>
+                                    <span>Количество выбранных:</span>
+                                    <span id="quantity-planned" th:text="${product.quantity ?: 0}"></span>
+                                </div>
+                                <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
+                                <button id="minus">-</button>
+                                <button id="plus">+</button>
+                                <button name="action" style="float:right;">В корзину</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             </table>

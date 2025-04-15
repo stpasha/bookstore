@@ -2,7 +2,6 @@ package com.bookstory.store.web;
 
 import com.bookstory.store.api.AccountControllerApi;
 import com.bookstory.store.model.User;
-import com.bookstory.store.repository.UserRepository;
 import com.bookstory.store.service.ProductService;
 import com.bookstory.store.web.dto.CartDTO;
 import com.bookstory.store.web.dto.ItemDTO;
@@ -10,8 +9,8 @@ import com.bookstory.store.web.dto.QuantityDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +30,12 @@ public class ItemController {
 
     private final ProductService productService;
     private final AccountControllerApi accountControllerApi;
-    private final UserRepository userRepository;
+    final private ReactiveUserDetailsService userDetailsService;
 
     @ModelAttribute("cart")
     public Mono<CartDTO> initializeCart() {
         return ReactiveSecurityContextHolder.getContext()
-                .flatMap(securityContext -> userRepository.findByUsername(securityContext.getAuthentication().getName())
+                .flatMap(securityContext -> userDetailsService.findByUsername(securityContext.getAuthentication().getName())
                         .flatMap(userDetails -> accountControllerApi.getAccountByUserId(((User)userDetails).getId())
                 .map(accountDTO -> new CartDTO(new HashMap<>(), "", userDetails.getUsername(), accountDTO))
                 ));
@@ -44,7 +43,6 @@ public class ItemController {
     }
 
     @PostMapping("/{id}/add")
-    //@PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<String> addItemToCart(ServerWebExchange exchange,
                                       @PathVariable("id") Long id,
                                       @ModelAttribute("cart") Mono<CartDTO> cartMono) {
@@ -93,7 +91,6 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}/remove")
-    //@PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<String> removeItemFromCart(@PathVariable("id") Long id,
                                            @ModelAttribute("cart") Mono<CartDTO> cartMono) {
         return cartMono.flatMap(cartDTO ->
@@ -114,7 +111,6 @@ public class ItemController {
     }
 
     @GetMapping
-    //@PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<String> viewCart(Model model, @ModelAttribute("cart") Mono<CartDTO> cartMono) {
         return cartMono
                 .flatMap(cartDTO ->
@@ -148,7 +144,6 @@ public class ItemController {
 
     @PutMapping("/{id}/product/{quantity}")
     @ResponseBody
-    //@PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<ResponseEntity<?>> modifyQuantity(@ModelAttribute("cart") Mono<CartDTO> cartMono,
                                                   @PathVariable("id") Long id,
                                                   @PathVariable("quantity") int quantity) {

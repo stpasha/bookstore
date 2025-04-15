@@ -12,15 +12,13 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.*;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.InMemoryReactiveOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
-import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.client.web.server.WebSessionServerOAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.authentication.logout.SecurityContextServerLogoutHandler;
@@ -53,17 +51,7 @@ public class SecurityConfig {
                         .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(tokenRequestAttributeHandler)
                 )
-                .formLogin(Customizer.withDefaults()
-//                        form -> form
-//                        .loginPage("/login")
-//                        .authenticationSuccessHandler(successHandler)
-//                        .authenticationFailureHandler((webFilterExchange, exception) -> {
-//                            ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
-//                            response.setStatusCode(HttpStatus.SEE_OTHER);
-//                            response.getHeaders().setLocation(URI.create("/login?error=bad_credentials"));
-//                            return Mono.empty();
-                    //    })
-                )
+                .formLogin(Customizer.withDefaults())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutHandler(new SecurityContextServerLogoutHandler())
@@ -75,9 +63,7 @@ public class SecurityConfig {
                                             response.setStatusCode(HttpStatus.SEE_OTHER);
                                             response.getHeaders().setLocation(URI.create("/login?logout"));
                                             return Mono.empty();
-                                        }))
-                        )
-                )
+                                        }))))
                 .exceptionHandling(handling -> handling
                         .accessDeniedHandler((exchange, denied) -> {
                             ServerHttpResponse response = exchange.getResponse();

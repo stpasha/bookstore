@@ -4,7 +4,6 @@ import com.bookstory.store.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -74,7 +73,7 @@ public class UserRepository {
             VALUES (:username, :password, :enabled)
             RETURNING user_id
             """;
-        log.info("insrt user {} {}", username, password);
+        log.info("insrt user {}", username);
         return databaseClient.sql(insertUserSql)
                 .bind("username", username)
                 .bind("password", password)
@@ -95,14 +94,25 @@ public class UserRepository {
                 .then();
     }
 
+    private Mono<Void> insertBasicAmount(Long userId) {
+        String insertAccSql = """
+                INSERT INTO storedata.accounts (amount, version, user_id)
+                        VALUES
+                        (1000, 1, :user_id)
+            """;
+        log.info("insrt 1000 rub {}", userId);
+        return databaseClient.sql(insertAccSql)
+                .bind("user_id", userId)
+                .then();
+    }
+
     public Mono<Void> createUserWithRoles(User user) {
         return insertUser(user.getUsername(), passwordEncoder.encode(user.getPassword()), user.isEnabled())
                 .flatMap(userId -> {
                     log.info("prepare to db {} ", userId );
-                    return Flux.fromIterable(user.getAuthorities().stream()
-                                    .map(GrantedAuthority::getAuthority).toList())
-                            .flatMap(role -> insertUserRole(userId, role))
-                            .then();
+                    return Flux.fromIterable(user.getAuthorities())
+                            .flatMap(auth -> insertUserRole(userId, auth.getAuthority()))
+                            .then(insertBasicAmount(userId));
                 });
     }
 

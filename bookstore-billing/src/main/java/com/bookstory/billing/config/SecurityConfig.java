@@ -18,7 +18,7 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity security) {
         return security
                 .authorizeExchange(requests -> requests
-                        .pathMatchers("/payments/**").hasAuthority("SCOPE_billing-payment")
+                        .pathMatchers("/account/**").hasAuthority("scope:billing:payment")
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(serverSpec -> serverSpec
@@ -29,9 +29,9 @@ public class SecurityConfig {
                                         ? (List<String>) ((java.util.Map<?, ?>) jwt.getClaimAsMap("realm_access")).get("roles")
                                         : List.of();
 
-                                // Маппим роли в authorities с префиксом SCOPE_
+                                // Маппим роли в authorities с префиксом scope
                                 return Flux.fromIterable(roles)
-                                        .map(role -> new SimpleGrantedAuthority("SCOPE_" + role));
+                                        .map(role -> new SimpleGrantedAuthority("scope:" + role));
                             });
 
                             jwtSpec.jwtAuthenticationConverter(jwtAuthenticationConverter);

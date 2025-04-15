@@ -1,19 +1,4 @@
 spring:
-  security:
-    oauth2:
-      client:
-        provider:
-          keycloak:
-            issuer-uri: http://keycloak:8080/realms/bookstore
-        registration:
-          billing-client:
-            provider: keycloak
-            authorization-grant-type: client_credentials
-            client-id: billing-client
-            client-secret: uafgakHtx4847Kd6KynsAjFJyOdmMeA5
-            scope:
-              - billing-payment
-            client-authentication-method: client_secret_post
   profiles:
     active: dev
   application:

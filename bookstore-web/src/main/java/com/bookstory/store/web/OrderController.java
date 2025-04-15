@@ -5,7 +5,6 @@ import com.bookstory.store.service.OrderService;
 import com.bookstory.store.web.dto.CartDTO;
 import com.bookstory.store.web.dto.OrderDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
@@ -46,7 +45,6 @@ public class OrderController {
     }
 
     @PostMapping
-    //@PreAuthorize("#cartDTO.username == authentication.name")
     public Mono<Rendering> createOrder(@SessionAttribute("cart") CartDTO cartDTO,
                                        ServerWebExchange exchange,
                                        SessionStatus sessionStatus) {
@@ -63,20 +61,24 @@ public class OrderController {
                             .items(cartDTO.getItems().values().stream().toList())
                             .build();
 
-                    return orderService.createOrder(Mono.just(orderDTO))
-                            .flatMap(createdOrder -> {
-                                sessionStatus.setComplete();
-                                return Mono.just(Rendering.view("order")
-                                        .modelAttribute("order", createdOrder)
-                                        .modelAttribute("newOrder", true)
-                                        .build());
-                            });
+                    return getRenderingOrder(sessionStatus, orderDTO);
                 })
                 .onErrorResume(e -> {
                     log.error("Order is not created: {}", e.getMessage());
                     return Mono.just(Rendering.view("error")
                             .modelAttribute("errorDetails", new ErrorDetails(LocalDateTime.now(), e.getMessage(),
                                     exchange.getRequest().getURI().toString())).build());
+                });
+    }
+
+    private Mono<Rendering> getRenderingOrder(SessionStatus sessionStatus, OrderDTO orderDTO) {
+        return orderService.createOrder(Mono.just(orderDTO))
+                .flatMap(createdOrder -> {
+                    sessionStatus.setComplete();
+                    return Mono.just(Rendering.view("order")
+                            .modelAttribute("order", createdOrder)
+                            .modelAttribute("newOrder", true)
+                            .build());
                 });
     }
 }
