@@ -12,7 +12,10 @@ import java.math.BigDecimal;
 @Repository
 @RequiredArgsConstructor
 public class ListItemRepository {
-    private static final String SELECT = """
+    private final DatabaseClient databaseClient;
+
+    public Flux<Item> findByOrdersId(Long orderId) {
+        return databaseClient.sql("""
             SELECT
                 order_id,
                 item_id,
@@ -28,11 +31,7 @@ public class ListItemRepository {
                 storedata.products
                 ON (items.product_id = products.product_id)
             WHERE order_id = :id
-            """;
-    private final DatabaseClient databaseClient;
-
-    public Flux<Item> findByOrdersId(Long orderId) {
-        return databaseClient.sql(SELECT)
+            """)
                 .bind("id", orderId)
                 .map(((row, rowMetadata) ->
                         Item.builder()
