@@ -13,7 +13,6 @@
     <a href="/products" style="float:right;"><b>ГЛАВНАЯ &cudarrr;</b></a>
     <a href="javascript: document.logoutForm.submit()"  style="float:right;"> <b>Выйти&cudarrr;</b> </a>
     <form name="logoutForm" th:action="@{/logout}"  method="post" th:hidden="true">
-        <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
         <input hidden type="submit" value="Logout"/>
     </form>
 </div>
@@ -45,7 +44,6 @@
                     <td>
                         <form th:action="@{'/items/' + ${item.key} + '/remove'}"  th:method="delete">
                             <input type="hidden" name="productId" th:value="${item.key}"/>
-                            <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
                             <button type="submit" name="action" value="delete" style="float:right;">&cross;</button>
                         </form>
                         <form class="changeQuant">
@@ -85,8 +83,7 @@
     </tr>
     <tr>
         <td style="text-align:right">
-            <form action="/orders" id="buy" th:style="${cart.accountDTO.amount <= totalPrice ? 'display:none;' : 'display:block;'}" method="post">
-                <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
+            <form th:action="@{/orders}" id="buy" th:style="${cart.accountDTO.amount <= totalPrice ? 'display:none;' : 'display:block;'}" method="post">
                 <label for="comment">Комментарий: </label>
                 <input id="comment" type="text" name="comment" />
                 <button>Купить</button>

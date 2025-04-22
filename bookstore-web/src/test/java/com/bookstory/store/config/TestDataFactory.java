@@ -1,4 +1,4 @@
-package com.bookstory.store.util;
+package com.bookstory.store.config;
 
 import com.bookstory.store.domain.AccountDTO;
 import com.bookstory.store.model.Item;

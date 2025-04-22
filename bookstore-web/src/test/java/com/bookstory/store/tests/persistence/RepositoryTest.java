@@ -8,7 +8,7 @@ import com.bookstory.store.repository.ItemRepository;
 import com.bookstory.store.repository.OrderRepository;
 import com.bookstory.store.repository.ProductRepository;
 import com.bookstory.store.tests.AbstractTest;
-import com.bookstory.store.util.TestDataFactory;
+import com.bookstory.store.config.TestDataFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

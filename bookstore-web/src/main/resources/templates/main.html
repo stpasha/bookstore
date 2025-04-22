@@ -13,7 +13,6 @@
     <a href="/admin" style="float:right;"><b>Настройка каталога &cudarrr;</b></a>
     <a href="javascript: document.logoutForm.submit()"  style="float:right;"> <b>Выйти&cudarrr;</b> </a>
     <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
-        <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
         <input hidden type="submit" value="Logout"/>
     </form>
 </div>
@@ -24,7 +23,6 @@
     <a href="/items" style="float:right;"><b>КОРЗИНА &cudarrr;</b></a>
     <a href="javascript: document.logoutForm.submit()"  style="float:right;"> <b>Выйти&cudarrr;</b> </a>
     <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
-        <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
         <input hidden type="submit" value="Logout"/>
     </form>
 </div>
@@ -71,7 +69,6 @@
                     <button th:if="${productPage.hasNext()}" name="page" th:value="${productPage.number + 1}">&gt;</button>
                 </p>
 
-                <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
                 <input type="hidden" name="pageNumber" th:value="${productPage.number}">
             </form>
         </td>
@@ -106,7 +103,6 @@
                                     <span>Количество выбранных:</span>
                                     <span id="quantity-planned" th:text="${product.quantity ?: 0}"></span>
                                 </div>
-                                <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
                                 <button id="minus">-</button>
                                 <button id="plus">+</button>
                                 <button name="action" style="float:right;">В корзину</button>

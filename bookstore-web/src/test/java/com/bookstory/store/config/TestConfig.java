@@ -1,6 +1,6 @@
 package com.bookstory.store.config;
 
-import com.bookstory.store.util.TestDataFactory;
+import com.bookstory.store.handler.AuthenticationSuccessHandler;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -8,14 +8,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.session.InMemoryReactiveSessionRegistry;
+import org.springframework.security.core.session.ReactiveSessionRegistry;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
+import org.springframework.security.web.server.authentication.*;
 import org.springframework.security.web.server.authentication.logout.SecurityContextServerLogoutHandler;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.security.web.server.csrf.ServerCsrfTokenRequestAttributeHandler;
@@ -24,6 +25,7 @@ import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.List;
 
 @TestConfiguration
 @EnableWebFluxSecurity
@@ -47,9 +49,20 @@ public class TestConfig {
     }
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, RedirectServerAuthenticationSuccessHandler successHandler) {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, ReactiveSessionRegistry registry) {
         ServerCsrfTokenRequestAttributeHandler tokenRequestAttributeHandler = new ServerCsrfTokenRequestAttributeHandler();
         tokenRequestAttributeHandler.setTokenFromMultipartDataEnabled(true);
+        var registerSessionHandler = new RegisterSessionServerAuthenticationSuccessHandler(registry);
+        var sessionLimitHandler = new ConcurrentSessionControlServerAuthenticationSuccessHandler(registry, new PreventLoginServerMaximumSessionsExceededHandler());
+        var customSuccessHandler = new AuthenticationSuccessHandler(registry);
+        sessionLimitHandler.setSessionLimit(SessionLimit.of(1));
+        var delegatingSuccessHandler = new DelegatingServerAuthenticationSuccessHandler(
+                List.of(
+                        sessionLimitHandler,
+                        registerSessionHandler,
+                        customSuccessHandler
+                )
+        );
         return http
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/items/**").hasRole("USER")
@@ -62,7 +75,9 @@ public class TestConfig {
                         .csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(tokenRequestAttributeHandler)
                 )
-                .formLogin(Customizer.withDefaults())
+                .formLogin(login -> login
+                        .authenticationSuccessHandler(delegatingSuccessHandler)
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutHandler(new SecurityContextServerLogoutHandler())
@@ -101,8 +116,8 @@ public class TestConfig {
     }
 
     @Bean
-    public RedirectServerAuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new RedirectServerAuthenticationSuccessHandler("/products");
+    public ReactiveSessionRegistry reactiveSessionRegistry() {
+        return new InMemoryReactiveSessionRegistry();
     }
 
 }
