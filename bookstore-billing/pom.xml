@@ -179,9 +179,9 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <rename src="./target/bookstore-billing-${version}.jar" dest="billing-${version}.jar"/>
-                                <copy file="billing-${version}.jar" toFile="./target/bookstore-billing-${version}.jar"/>
-                                <chmod file="./billing-${version}.jar" perm="a+x"/>
+                                <rename src="./target/bookstore-billing-${project.version}.jar" dest="billing-${project.version}.jar"/>
+                                <copy file="billing-${project.version}.jar" toFile="./target/bookstore-billing-${project.version}.jar"/>
+                                <chmod file="./billing-${project.version}.jar" perm="a+x"/>
                             </target>
                         </configuration>
                         <goals>

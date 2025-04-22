@@ -9,3 +9,7 @@ image:
     resource: "file:uploads/"
   static:
     resource: classpath:/static/
+server:
+  reactive:
+    session:
+      timeout: 4m

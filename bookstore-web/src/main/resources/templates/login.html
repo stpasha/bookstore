@@ -1,32 +1,30 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Вход</title>
-    <link href="/css/default-ui.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Пожалуйста войдите</title>
+    <link href="/css/default-ui.css" rel="stylesheet" />
 </head>
 <body>
-<h2>Вход в систему</h2>
+<div class="content">
+    <form th:action="@{/login} class="login-form" method="post" ">
+        <h2>Пожалуйста войдите</h2>
+        <div class="alert alert-success" role="alert">You have been signed out</div>
+        <p>
+            <label for="username" class="screenreader">Логин</label>
+            <input type="text" id="username" name="username" placeholder="Логин" required autofocus>
+        </p>
+        <p>
+            <label for="password" class="screenreader">Пароль</label>
+            <input type="password" id="password" name="password" placeholder="Пароль" required>
+        </p>
+        <button type="submit" class="primary">Войти</button>
+    </form>
 
-<div th:if="${errorMessage}" style="color: red;">
-    <p th:text="${errorMessage}"></p>
+
 </div>
-<!--<div th:if="${param.logout}" style="color: green;">-->
-<!--    <p>Вы успешно вышли из системы.</p>-->
-<!--</div>-->
-<form class="login-form" th:action="@{/login}" method="post">
-
-    <p>
-        <label for="username">Имя пользователя:</label>
-        <input type="text" id="username" name="username" required>
-    </p>
-    <p>
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required>
-    </p>
-<!--    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>-->
-    <input type="hidden" th:name="_csrf" th:value="${csrfToken}" />
-    <button type="submit">Войти</button>
-</form>
 </body>
 </html>

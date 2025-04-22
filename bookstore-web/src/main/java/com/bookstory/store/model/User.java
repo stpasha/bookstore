@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,9 +14,11 @@ import java.util.Collection;
 
 @Builder
 @Setter
+@EqualsAndHashCode
 public class User implements UserDetails {
 
     @Getter
+    @EqualsAndHashCode.Include
     Long id;
 
     @Size(max = 255, message = "Should be not greater than 255 symbols")

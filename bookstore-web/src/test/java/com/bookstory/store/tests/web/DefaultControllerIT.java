@@ -4,7 +4,7 @@ import com.bookstory.store.annotations.StoreTestAnnotation;
 import com.bookstory.store.service.OrderService;
 import com.bookstory.store.service.ProductService;
 import com.bookstory.store.tests.AbstractTest;
-import com.bookstory.store.util.TestDataFactory;
+import com.bookstory.store.config.TestDataFactory;
 import com.bookstory.store.web.dto.OrderDTO;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
